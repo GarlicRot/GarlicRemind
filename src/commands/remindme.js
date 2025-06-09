@@ -202,6 +202,7 @@ module.exports = {
             interaction,
           }),
         ],
+        flags: 64,
       });
     }
 
