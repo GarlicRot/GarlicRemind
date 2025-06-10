@@ -14,7 +14,6 @@
  */
 
 const crypto = require("crypto");
-const { SlashCommandSubcommandBuilder } = require("discord.js");
 const { scheduleReminder } = require("../../utils/reminderStore");
 const { buildEmbed } = require("../../utils/embedBuilder");
 const logger = require("../../utils/logger");
@@ -47,33 +46,14 @@ function parseTime(timeStr) {
 }
 
 module.exports = {
-  data: new SlashCommandSubcommandBuilder()
-    .setName("every")
-    .setDescription("Set a recurring reminder (e.g., every day at 2:00pm)")
-    .addStringOption((opt) =>
-      opt
-        .setName("interval")
-        .setDescription(
-          "daily, weekly, monthly, or day of week (e.g., Tuesday)"
-        )
-        .setRequired(true)
-    )
-    .addStringOption((opt) =>
-      opt
-        .setName("time")
-        .setDescription("Time of day (e.g., 2:00 PM)")
-        .setRequired(true)
-    )
-    .addStringOption((opt) =>
-      opt.setName("message").setDescription("Reminder message")
-    ),
-
   name: "every",
 
   async execute(interaction) {
-    const interval = interaction.options.getString("interval").toLowerCase();
+    const intervalRaw = interaction.options.getString("interval");
+    const interval = intervalRaw.toLowerCase();
     const timeStr = interaction.options.getString("time");
     const rawMessage = interaction.options.getString("message");
+
     const userId = interaction.user.id;
     const client = interaction.client;
     const channelId = interaction.channel.id;
@@ -139,8 +119,11 @@ module.exports = {
     const id = crypto.randomUUID();
     const repeatMeta = {
       type: interval,
-      userDayOfMonth: now.day,
     };
+
+    if (interval === "monthly") {
+      repeatMeta.userDayOfMonth = now.day;
+    }
 
     await scheduleReminder(
       {
@@ -156,7 +139,7 @@ module.exports = {
     );
 
     const description =
-      `**Repeats:** Every ${interval} at ${timeStr}\n` +
+      `**Repeats:** Every ${intervalRaw} at ${timeStr}\n` +
       `**First Reminder:** ${formatTimestamp(target.toMillis())}\n` +
       `**Message:** ${message}`;
 
@@ -171,6 +154,8 @@ module.exports = {
       ],
     });
 
-    logger.success(`🔁 Created recurring reminder (${interval})`);
+    logger.success(
+      `🔁 Set recurring reminder: ${intervalRaw} at ${timeStr} (${id})`
+    );
   },
 };

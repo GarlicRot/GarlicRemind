@@ -77,6 +77,13 @@ for (const file of eventFiles) {
 // On ready
 client.once("ready", async () => {
   logger.success(`🤖 Logged in as ${client.user.tag}`);
+
+  // Set presence to "/help"
+  client.user.setPresence({
+    activities: [{ name: "/help", type: 0 }], // type 0 = Playing
+    status: "online",
+  });
+
   await loadReminders(client);
 });
 
