@@ -36,20 +36,27 @@ const client = new Client({
 
 client.commands = new Collection();
 
-// Load command modules
+// Load command modules recursively
 const commands = [];
 const commandsPath = path.join(__dirname, "commands");
-const commandFiles = fs
-  .readdirSync(commandsPath)
-  .filter((file) => file.endsWith(".js"));
 
-for (const file of commandFiles) {
-  const command = require(path.join(commandsPath, file));
-  if (command.data && typeof command.execute === "function") {
-    client.commands.set(command.data.name, command);
-    commands.push(command.data.toJSON());
+function loadCommandsRecursively(dir) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      loadCommandsRecursively(fullPath);
+    } else if (entry.isFile() && entry.name.endsWith(".js")) {
+      const command = require(fullPath);
+      if (command.data && typeof command.execute === "function") {
+        client.commands.set(command.data.name, command);
+        commands.push(command.data.toJSON());
+      }
+    }
   }
 }
+
+loadCommandsRecursively(commandsPath);
 
 // Load event handlers from /events
 const eventsPath = path.join(__dirname, "events");

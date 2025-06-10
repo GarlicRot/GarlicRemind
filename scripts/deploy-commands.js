@@ -27,16 +27,23 @@ const TOKEN = process.env.DISCORD_TOKEN;
 
 const commands = [];
 const commandsPath = path.join(__dirname, "../src/commands");
-const commandFiles = fs
-  .readdirSync(commandsPath)
-  .filter((file) => file.endsWith(".js"));
 
-for (const file of commandFiles) {
-  const command = require(path.resolve(commandsPath, file));
-  if (command.data) {
-    commands.push(command.data.toJSON());
+function loadCommandsRecursively(dir) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      loadCommandsRecursively(fullPath);
+    } else if (entry.isFile() && entry.name.endsWith(".js")) {
+      const command = require(fullPath);
+      if (command.data) {
+        commands.push(command.data.toJSON());
+      }
+    }
   }
 }
+
+loadCommandsRecursively(commandsPath);
 
 const rest = new REST({ version: "10" }).setToken(TOKEN);
 
