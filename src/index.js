@@ -4,8 +4,9 @@
  * -----------------------------------------------------------
  *
  * Description:
- * Initializes the bot, clears and registers slash commands,
- * loads event handlers and restores reminders, then logs in.
+ * Initializes the bot, clears and re-registers global slash
+ * commands for production, loads events and reminders, and
+ * logs into Discord using environment variables.
  *
  * Created by: GarlicRot
  * GitHub: https://github.com/GarlicRot
@@ -30,7 +31,7 @@ const logger = require("./utils/logger");
 const { loadReminders } = require("./utils/reminderStore");
 
 // -----------------------------------------------------------
-// Deploy Slash Commands Before Bot Starts
+// Deploy Global Slash Commands (Production)
 // -----------------------------------------------------------
 (async () => {
   const CLIENT_ID = process.env.CLIENT_ID;
@@ -61,7 +62,10 @@ const { loadReminders } = require("./utils/reminderStore");
     logger.info("🧹 Clearing existing global slash commands...");
     await rest.put(Routes.applicationCommands(CLIENT_ID), { body: [] });
 
-    logger.info("📤 Deploying global slash commands...");
+    logger.info("⏳ Waiting briefly before re-registering global commands...");
+    await new Promise((resolve) => setTimeout(resolve, 5000)); // wait 5s
+
+    logger.info("📤 Deploying new global slash commands...");
     await rest.put(Routes.applicationCommands(CLIENT_ID), {
       body: deployCommands,
     });
@@ -101,7 +105,7 @@ function loadCommandsRecursively(dir) {
 
 loadCommandsRecursively(commandsPath);
 
-// Load event handlers from /events
+// Load event handlers
 const eventsPath = path.join(__dirname, "events");
 const eventFiles = fs
   .readdirSync(eventsPath)
@@ -121,7 +125,6 @@ for (const file of eventFiles) {
 client.once("ready", async () => {
   logger.success(`🤖 Logged in as ${client.user.tag}`);
 
-  // Set presence to "/help"
   client.user.setPresence({
     activities: [{ name: "/help", type: 0 }],
     status: "online",
