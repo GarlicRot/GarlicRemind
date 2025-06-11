@@ -4,8 +4,8 @@
  * -----------------------------------------------------------
  *
  * Description:
- * Initializes the bot, loads slash commands and event handlers,
- * restores reminders, and logs into Discord using environment variables.
+ * Initializes the bot, clears and registers slash commands,
+ * loads event handlers and restores reminders, then logs in.
  *
  * Created by: GarlicRot
  * GitHub: https://github.com/GarlicRot
@@ -29,15 +29,58 @@ const {
 const logger = require("./utils/logger");
 const { loadReminders } = require("./utils/reminderStore");
 
-// Initialize Discord client
+// -----------------------------------------------------------
+// Deploy Slash Commands Before Bot Starts
+// -----------------------------------------------------------
+(async () => {
+  const CLIENT_ID = process.env.CLIENT_ID;
+  const TOKEN = process.env.DISCORD_TOKEN;
+  const rest = new REST({ version: "10" }).setToken(TOKEN);
+
+  const deployCommands = [];
+  const commandsPath = path.join(__dirname, "commands");
+
+  function loadDeployCommands(dir) {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        loadDeployCommands(fullPath);
+      } else if (entry.isFile() && entry.name.endsWith(".js")) {
+        const command = require(fullPath);
+        if (command.data) {
+          deployCommands.push(command.data.toJSON());
+        }
+      }
+    }
+  }
+
+  loadDeployCommands(commandsPath);
+
+  try {
+    logger.info("🧹 Clearing existing global slash commands...");
+    await rest.put(Routes.applicationCommands(CLIENT_ID), { body: [] });
+
+    logger.info("📤 Deploying global slash commands...");
+    await rest.put(Routes.applicationCommands(CLIENT_ID), {
+      body: deployCommands,
+    });
+
+    logger.success("✅ Global commands deployed successfully.");
+  } catch (error) {
+    logger.error("❌ Failed to deploy global commands:", error);
+  }
+})();
+
+// -----------------------------------------------------------
+// Initialize Discord Client
+// -----------------------------------------------------------
 const client = new Client({
   intents: [GatewayIntentBits.Guilds],
 });
 
 client.commands = new Collection();
-
-// Load command modules recursively
-const commands = [];
+const loadedCommands = [];
 const commandsPath = path.join(__dirname, "commands");
 
 function loadCommandsRecursively(dir) {
@@ -50,7 +93,7 @@ function loadCommandsRecursively(dir) {
       const command = require(fullPath);
       if (command.data && typeof command.execute === "function") {
         client.commands.set(command.data.name, command);
-        commands.push(command.data.toJSON());
+        loadedCommands.push(command.data.toJSON());
       }
     }
   }
@@ -80,7 +123,7 @@ client.once("ready", async () => {
 
   // Set presence to "/help"
   client.user.setPresence({
-    activities: [{ name: "/help", type: 0 }], // type 0 = Playing
+    activities: [{ name: "/help", type: 0 }],
     status: "online",
   });
 
