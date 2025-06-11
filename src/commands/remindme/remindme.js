@@ -198,7 +198,7 @@ module.exports = {
     const sub = interaction.options.getSubcommand();
     const userId = interaction.user.id;
     const client = interaction.client;
-    const channelId = interaction.channel?.id ?? "unknown";
+    const channelId = interaction.channel?.id;
 
     if (sub === "timezone") {
       const timezoneHandler = require("./timezone");
