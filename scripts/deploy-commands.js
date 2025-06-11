@@ -1,6 +1,6 @@
 /**
  * -----------------------------------------------------------
- * GarlicRemind - Deploy Slash Commands (Production)
+ * GarlicRemind - Deploy Slash Commands (Global)
  * -----------------------------------------------------------
  *
  * Description:
@@ -22,7 +22,6 @@ const path = require("path");
 const logger = require("../src/utils/logger");
 
 const CLIENT_ID = process.env.CLIENT_ID;
-const GUILD_ID = process.env.GUILD_ID;
 const TOKEN = process.env.DISCORD_TOKEN;
 
 const commands = [];
@@ -49,16 +48,16 @@ const rest = new REST({ version: "10" }).setToken(TOKEN);
 
 (async () => {
   try {
-    logger.info("🧹 Clearing global commands to avoid duplicates...");
+    logger.info("🧹 Clearing existing global commands...");
     await rest.put(Routes.applicationCommands(CLIENT_ID), { body: [] });
 
-    logger.info("📤 Deploying guild slash commands...");
-    await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
+    logger.info("📤 Deploying global slash commands...");
+    await rest.put(Routes.applicationCommands(CLIENT_ID), {
       body: commands,
     });
 
-    logger.success("✅ Guild commands deployed successfully.");
+    logger.success("✅ Global commands deployed successfully.");
   } catch (error) {
-    logger.error("❌ Failed to deploy guild commands:", error);
+    logger.error("❌ Failed to deploy global commands:", error);
   }
 })();
