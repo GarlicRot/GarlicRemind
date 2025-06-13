@@ -45,6 +45,12 @@
 
 ---
 
+<p align="center">
+  <img src="https://garlic.tulipterminal.com/SeRU1/kaWoPate64.gif/raw" alt="GarlicRemind demo" width="600" />
+</p>
+
+---
+
 > [!NOTE]
 > The bot supports autocomplete for time, date, and timezone entries to speed up your workflow.
 
