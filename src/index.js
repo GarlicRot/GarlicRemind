@@ -4,9 +4,8 @@
  * -----------------------------------------------------------
  *
  * Description:
- * Initializes the bot, clears and re-registers global slash
- * commands for production, loads events and reminders, and
- * logs into Discord using environment variables.
+ * Initializes the bot, loads event handlers and reminders,
+ * and logs into Discord using environment variables.
  *
  * Created by: GarlicRot
  * GitHub: https://github.com/GarlicRot
@@ -19,62 +18,10 @@
 require("dotenv").config();
 const fs = require("fs");
 const path = require("path");
-const {
-  Client,
-  Collection,
-  GatewayIntentBits,
-  REST,
-  Routes,
-} = require("discord.js");
+const { Client, Collection, GatewayIntentBits } = require("discord.js");
 
 const logger = require("./utils/logger");
 const { loadReminders } = require("./utils/reminderStore");
-
-// -----------------------------------------------------------
-// Deploy Global Slash Commands (Production)
-// -----------------------------------------------------------
-(async () => {
-  const CLIENT_ID = process.env.CLIENT_ID;
-  const TOKEN = process.env.DISCORD_TOKEN;
-  const rest = new REST({ version: "10" }).setToken(TOKEN);
-
-  const deployCommands = [];
-  const commandsPath = path.join(__dirname, "commands");
-
-  function loadDeployCommands(dir) {
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
-    for (const entry of entries) {
-      const fullPath = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        loadDeployCommands(fullPath);
-      } else if (entry.isFile() && entry.name.endsWith(".js")) {
-        const command = require(fullPath);
-        if (command.data) {
-          deployCommands.push(command.data.toJSON());
-        }
-      }
-    }
-  }
-
-  loadDeployCommands(commandsPath);
-
-  try {
-    logger.info("🧹 Clearing existing global slash commands...");
-    await rest.put(Routes.applicationCommands(CLIENT_ID), { body: [] });
-
-    logger.info("⏳ Waiting briefly before re-registering global commands...");
-    await new Promise((resolve) => setTimeout(resolve, 5000)); // wait 5s
-
-    logger.info("📤 Deploying new global slash commands...");
-    await rest.put(Routes.applicationCommands(CLIENT_ID), {
-      body: deployCommands,
-    });
-
-    logger.success("✅ Global commands deployed successfully.");
-  } catch (error) {
-    logger.error("❌ Failed to deploy global commands:", error);
-  }
-})();
 
 // -----------------------------------------------------------
 // Initialize Discord Client
