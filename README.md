@@ -1,4 +1,9 @@
+<p align="center">
+  <img src="icon.png" width="300" alt="GarlicRemind logo" />
+</p>
+
 # GarlicRemind
+
 
 [![Invite](https://img.shields.io/badge/Invite-Bot-5865F2?logo=discord&logoColor=white)](https://discord.com/oauth2/authorize?client_id=1381036586304667820&scope=bot+applications.commands&permissions=2147576832)
 [![Repo Size](https://img.shields.io/github/repo-size/GarlicRot/GarlicRemind)](https://github.com/GarlicRot/GarlicRemind)
