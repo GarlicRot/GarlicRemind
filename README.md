@@ -2,6 +2,7 @@
 
 [![Invite](https://img.shields.io/badge/Invite-Bot-5865F2?logo=discord&logoColor=white)](https://discord.com/oauth2/authorize?client_id=1381036586304667820&scope=bot+applications.commands&permissions=2147576832)
 [![Repo Size](https://img.shields.io/github/repo-size/GarlicRot/GarlicRemind)](https://github.com/GarlicRot/GarlicRemind)
+[![CI](https://github.com/GarlicRot/GarlicRemind/actions/workflows/ci.yml/badge.svg)](https://github.com/GarlicRot/GarlicRemind/actions/workflows/ci.yml)
 
 GarlicRemind is a precise and lightweight Discord bot for setting reminders. It supports durations, specific dates, today-at scheduling, recurring events, and full timezone support. Designed to be simple, useful, and clutter-free.
 
