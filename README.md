@@ -45,6 +45,9 @@
 
 ---
 
+> [!TIP]
+> Use natural time formats like `10m`, `2h`, `01:30 PM`, or `MM-DD-YYYY` when using the bot.
+
 <p align="center">
   <img src="https://garlic.tulipterminal.com/SeRU1/kaWoPate64.gif/raw" alt="GarlicRemind demo" width="600" />
 </p>
@@ -69,9 +72,6 @@
 | `/help`              | Display a list of all supported commands                    |
 
 ---
-
-> [!TIP]
-> Use natural time formats like `10m`, `2h`, `01:30 PM`, or `MM-DD-YYYY` when using the bot.
 
 > [!WARNING]
 > Timezone must be configured before using `/remindme on`, `/remindme at`, or `/remindme every`.
