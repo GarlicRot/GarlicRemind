@@ -56,7 +56,22 @@ module.exports = {
 
     const userId = interaction.user.id;
     const client = interaction.client;
-    const channelId = interaction.channel.id;
+
+    const channelId = interaction.channel?.id || null;
+    if (!channelId) {
+      return interaction.reply({
+        embeds: [
+          buildEmbed({
+            title: "❌ Unable to Set Reminder",
+            description:
+              "Couldn't find a valid channel to schedule the reminder.",
+            type: "error",
+            interaction,
+          }),
+        ],
+        flags: 64,
+      });
+    }
 
     const message = sanitizeMessage(rawMessage);
     if (message === null) {
@@ -117,9 +132,7 @@ module.exports = {
     }
 
     const id = crypto.randomUUID();
-    const repeatMeta = {
-      type: interval,
-    };
+    const repeatMeta = { type: interval };
 
     if (interval === "monthly") {
       repeatMeta.userDayOfMonth = now.day;
