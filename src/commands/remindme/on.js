@@ -73,7 +73,8 @@ module.exports = {
   async execute(interaction) {
     const userId = interaction.user.id;
     const client = interaction.client;
-    const channelId = interaction.channel.id;
+    const channelId =
+      interaction.channel?.id || (await interaction.user.createDM()).id;
 
     const timezone = await getUserTimezone(userId);
     if (!timezone) {

@@ -57,21 +57,8 @@ module.exports = {
     const userId = interaction.user.id;
     const client = interaction.client;
 
-    const channelId = interaction.channel?.id || null;
-    if (!channelId) {
-      return interaction.reply({
-        embeds: [
-          buildEmbed({
-            title: "❌ Unable to Set Reminder",
-            description:
-              "Couldn't find a valid channel to schedule the reminder.",
-            type: "error",
-            interaction,
-          }),
-        ],
-        flags: 64,
-      });
-    }
+    const channelId =
+      interaction.channel?.id || (await interaction.user.createDM()).id;
 
     const message = sanitizeMessage(rawMessage);
     if (message === null) {
