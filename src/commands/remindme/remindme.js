@@ -303,19 +303,27 @@ module.exports = {
         const reminders = (await getReminders()).filter(
           (r) => r.userId === interaction.user.id
         );
+
+        const timezone = await getUserTimezone(interaction.user.id);
+
         const choices = reminders
-          .map((r) => ({
-            name: `${r.message || "*No message*"} – ${new Date(
-              r.remindAt
-            ).toLocaleString()}`,
-            value: r.id,
-          }))
+          .map((r) => {
+            const time = timezone
+              ? DateTime.fromMillis(r.remindAt).setZone(timezone).toFormat("f")
+              : new Date(r.remindAt).toLocaleString();
+
+            return {
+              name: `${r.message || "*No message*"} – ${time}`,
+              value: r.id,
+            };
+          })
           .filter((choice) =>
             choice.name
               .toLowerCase()
               .includes(focusedOption.value.toLowerCase())
           )
           .slice(0, 25);
+
         return interaction.respond(choices);
       }
 
