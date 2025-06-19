@@ -7,13 +7,16 @@
 <p align="center">
   <a href="https://discord.com/oauth2/authorize?client_id=1381036586304667820&scope=bot+applications.commands&permissions=2147576832">
     <img src="https://img.shields.io/badge/Invite-Bot-5865F2?logo=discord&logoColor=white" alt="Invite" />
-  </a>
   <a href="https://github.com/GarlicRot/GarlicRemind">
     <img src="https://img.shields.io/github/repo-size/GarlicRot/GarlicRemind" alt="Repo Size" />
   </a>
   <a href="https://github.com/GarlicRot/GarlicRemind/actions/workflows/ci.yml">
     <img src="https://github.com/GarlicRot/GarlicRemind/actions/workflows/ci.yml/badge.svg" alt="CI" />
   </a>
+  </a>
+    <a href="https://discord.gg/X4rwss4DRg">
+    <img src="https://img.shields.io/badge/Support-Server-5865F2?logo=discord&logoColor=white" alt="Server" />
+    </a>
 </p>
 
 <p align="center">
