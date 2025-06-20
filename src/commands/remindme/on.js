@@ -160,8 +160,11 @@ module.exports = {
       client
     );
 
+    const username = `${interaction.user.tag} (${interaction.user.id})`;
+    const channel = interaction.channel?.name || "DM";
+
     logger.success(
-      `📅 ${interaction.user.tag} set reminder for ${dateStr} ${timeStr} (${id})`
+      `📅 Reminder set for ${dateStr} ${timeStr} (${id}) by ${username} in ${channel}`
     );
   },
 };

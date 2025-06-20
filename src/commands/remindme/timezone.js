@@ -41,7 +41,8 @@ module.exports = {
     }
 
     await setUserTimezone(userId, zone);
-    logger.success(`🌍 ${interaction.user.tag} set timezone to ${zone}`);
+    const username = `${interaction.user.tag} (${interaction.user.id})`;
+    logger.success(`🌍 ${username} set timezone to ${zone}`);
 
     return interaction.reply({
       embeds: [

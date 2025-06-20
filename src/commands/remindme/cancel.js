@@ -43,7 +43,13 @@ module.exports = {
 
     await removeReminder(reminder.id);
 
-    logger.success(`🗑️ ${interaction.user.tag} cancelled reminder ${id}`);
+    const username = `${interaction.user.tag} (${interaction.user.id})`;
+    const channel = interaction.channel?.name || "DM";
+
+    logger.success(
+      `🗑️ Reminder cancelled by ${username} in ${channel} — Message: "${reminder.message}", ID: ${id}`
+    );
+
     return interaction.reply({
       embeds: [
         buildEmbed({

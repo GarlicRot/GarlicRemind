@@ -154,8 +154,11 @@ module.exports = {
       ],
     });
 
+    const username = `${interaction.user.tag} (${interaction.user.id})`;
+    const channel = interaction.channel?.name || "DM";
+
     logger.success(
-      `🔁 Set recurring reminder: ${intervalRaw} at ${timeStr} (${id})`
+      `🔁 ${username} set recurring reminder: ${intervalRaw} at ${timeStr} (${id}) in ${channel}`
     );
   },
 };

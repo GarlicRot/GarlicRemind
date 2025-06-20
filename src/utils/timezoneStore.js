@@ -36,9 +36,13 @@ async function setUserTimezone(userId, timezone) {
       expiresAt: Date.now() + CACHE_TTL,
     });
 
-    logger.success(`🕓 Timezone saved for ${userId}: ${timezone}`);
+    logger.success(
+      `🌍 Saved timezone for ${formatUserId(userId)} → ${timezone}`
+    );
   } catch (error) {
-    logger.error(`❌ Failed to save timezone for ${userId}: ${error.message}`);
+    logger.error(
+      `❌ Failed to save timezone for ${formatUserId(userId)}: ${error.message}`
+    );
   }
 }
 
@@ -50,9 +54,8 @@ async function setUserTimezone(userId, timezone) {
 async function getUserTimezone(userId) {
   const cached = timezoneCache.get(userId);
 
-  // Check if cached value exists and is still valid
   if (cached && cached.expiresAt > Date.now()) {
-    logger.info(`🧠 Cache hit for ${userId}: ${cached.value}`);
+    logger.info(`⚡ Cache hit for ${formatUserId(userId)} → ${cached.value}`);
     return cached.value;
   }
 
@@ -67,12 +70,28 @@ async function getUserTimezone(userId) {
       });
     }
 
-    logger.info(`📡 Fetched timezone for ${userId}: ${timezone || "none"}`);
+    logger.info(
+      `📡 Fetched timezone for ${formatUserId(userId)} → ${timezone || "none"}`
+    );
     return timezone;
   } catch (error) {
-    logger.error(`❌ Failed to get timezone for ${userId}: ${error.message}`);
+    logger.error(
+      `❌ Failed to get timezone for ${formatUserId(userId)}: ${error.message}`
+    );
     return null;
   }
+}
+
+/**
+ * Formats a userId for display in logs.
+ * @param {string|object} userId
+ * @returns {string}
+ */
+function formatUserId(userId) {
+  if (typeof userId === "object" && userId.tag && userId.id) {
+    return `${userId.tag} (${userId.id})`;
+  }
+  return userId || "Unknown User";
 }
 
 module.exports = {

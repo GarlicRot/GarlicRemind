@@ -42,8 +42,11 @@ module.exports = {
       await removeReminder(r.id);
     }
 
+    const username = `${interaction.user.tag} (${interaction.user.id})`;
+    const channel = interaction.channel?.name || "DM";
+
     logger.success(
-      `🧹 ${interaction.user.tag} cleared ${userReminders.length} reminders`
+      `🧹 ${username} cleared ${userReminders.length} reminder(s) in ${channel}`
     );
 
     return interaction.reply({

@@ -37,9 +37,9 @@ async function loadReminders(client) {
 
       if (timeLeft <= 0) {
         logger.warn(
-          `⏰ Reminder ${reminder.id} for ${
-            reminder.userId
-          } is overdue by ${Math.abs(timeLeft)}ms`
+          `⏰ Overdue reminder for ${reminder.userId} (ID: ${
+            reminder.id
+          }) overdue by ${Math.abs(timeLeft)}ms`
         );
 
         try {
@@ -57,7 +57,7 @@ async function loadReminders(client) {
               client,
               guildId: channel.guildId,
               channelId: channel.id,
-              id: reminder.messageId || reminder.id, // use messageId if available
+              id: reminder.messageId || reminder.id,
               createdTimestamp: Date.now(),
             },
           });
@@ -66,10 +66,15 @@ async function loadReminders(client) {
             content: `<@${reminder.userId}>`,
             embeds: [embed],
           });
-          logger.success(`✅ Sent overdue reminder ${reminder.id}`);
+
+          logger.success(
+            `✅ Sent overdue reminder (ID: ${reminder.id}) for ${reminder.userId}`
+          );
           await removeReminder(reminder.id);
         } catch (err) {
-          logger.error(`❌ Failed to send overdue reminder: ${err.message}`);
+          logger.error(
+            `❌ Failed to send overdue reminder (ID: ${reminder.id}): ${err.message}`
+          );
         }
       } else {
         scheduleSingle(reminder, client);
@@ -91,9 +96,9 @@ async function scheduleReminder(reminder, client) {
     .set(reminder);
 
   logger.success(
-    `⏰ Reminder set for ${reminder.userId} in ${
-      reminder.channelId
-    } at ${new Date(reminder.remindAt).toISOString()} (ID: ${reminder.id})`
+    `⏰ Reminder saved for ${reminder.userId} (ID: ${reminder.id}) – ${new Date(
+      reminder.remindAt
+    ).toISOString()} in channel ${reminder.channelId}`
   );
 
   scheduleSingle(reminder, client);
@@ -121,7 +126,7 @@ async function scheduleSingle(reminder, client) {
             client,
             guildId: channel.guildId,
             channelId: channel.id,
-            id: reminder.messageId || undefined, // 🟢 Jump link fix
+            id: reminder.messageId || undefined,
             createdTimestamp: reminder.remindAt,
           },
         });
@@ -132,20 +137,22 @@ async function scheduleSingle(reminder, client) {
         });
 
         logger.success(
-          `🔔 Reminder delivered to ${reminder.userId} in ${reminder.channelId} (ID: ${reminder.id})`
+          `🔔 Reminder sent to ${reminder.userId} in ${reminder.channelId} (ID: ${reminder.id})`
         );
 
         await removeReminder(reminder.id);
       } catch (sendErr) {
         logger.error(
-          `❌ Failed to send reminder ${reminder.id}: ${sendErr.message}`
+          `❌ Failed to send reminder (ID: ${reminder.id}): ${sendErr.message}`
         );
       }
     }, delay);
 
     activeTimeouts[reminder.id] = timeout;
   } catch (err) {
-    logger.warn(`⚠️ Could not restore reminder ${reminder.id}: ${err.message}`);
+    logger.warn(
+      `⚠️ Could not schedule reminder (ID: ${reminder.id}) for ${reminder.userId}: ${err.message}`
+    );
 
     try {
       const user = await client.users.fetch(reminder.userId);
@@ -165,7 +172,7 @@ async function scheduleSingle(reminder, client) {
       });
     } catch (userErr) {
       logger.warn(
-        `⚠️ Could not notify user ${reminder.userId}: ${userErr.message}`
+        `⚠️ Could not DM user ${reminder.userId} about failed reminder: ${userErr.message}`
       );
     }
   }
@@ -184,7 +191,7 @@ async function removeReminder(id) {
     .doc(id)
     .delete();
 
-  logger.info(`🧼 Removed reminder with ID ${id}`);
+  logger.info(`🧼 Removed reminder (ID: ${id})`);
 }
 
 async function getReminders() {

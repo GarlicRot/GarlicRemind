@@ -14,6 +14,7 @@
 
 const { SlashCommandBuilder } = require("discord.js");
 const { buildEmbed } = require("../utils/embedBuilder");
+const logger = require("../utils/logger");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -45,5 +46,10 @@ module.exports = {
       ],
       flags: 64,
     });
+
+    // Logging
+    const username = `${interaction.user.tag} (${interaction.user.id})`;
+    const channel = interaction.channel?.name || "DM";
+    logger.success(`📘 Help command used by ${username} in ${channel}`);
   },
 };

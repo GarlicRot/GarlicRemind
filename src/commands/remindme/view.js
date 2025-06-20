@@ -14,6 +14,7 @@
 
 const { getReminders } = require("../../utils/reminderStore");
 const { buildEmbed } = require("../../utils/embedBuilder");
+const logger = require("../../utils/logger");
 
 module.exports = {
   name: "view",
@@ -21,8 +22,10 @@ module.exports = {
   async execute(interaction) {
     const userId = interaction.user.id;
     const reminders = (await getReminders()).filter((r) => r.userId === userId);
+    const username = `${interaction.user.tag} (${userId})`;
 
     if (reminders.length === 0) {
+      logger.success(`📭 ${username} viewed 0 active reminders`);
       return interaction.reply({
         embeds: [
           buildEmbed({
@@ -42,6 +45,10 @@ module.exports = {
           `\`${i + 1}.\` <t:${Math.floor(r.remindAt / 1000)}:R> – ${r.message}`
       )
       .join("\n");
+
+    logger.success(
+      `📌 ${username} viewed ${reminders.length} active reminders`
+    );
 
     return interaction.reply({
       embeds: [

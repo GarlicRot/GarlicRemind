@@ -118,10 +118,13 @@ module.exports = {
       client
     );
 
+    const username = `${interaction.user.tag} (${interaction.user.id})`;
+    const channel = interaction.channel?.name || "DM";
+
     logger.success(
       `${
         reminderId ? "✏️ Edited" : "⏰ Created"
-      } reminder in ${duration} (${id})`
+      } reminder in ${duration} (${id}) by ${username} in ${channel}`
     );
   },
 
