@@ -30,6 +30,8 @@ const client = new Client({
   intents: [GatewayIntentBits.Guilds],
 });
 
+logger.setDiscordClient(client);
+
 client.commands = new Collection();
 const loadedCommands = [];
 const commandsPath = path.join(__dirname, "commands");
