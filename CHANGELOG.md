@@ -66,6 +66,7 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-06-20
+- `chore(workflow): fix changelog action formatting and syntax` ([`e037ebb`](https://github.com/GarlicRot/GarlicRemind/commit/e037ebb2ea5d4638b31c7bf3c9255b50cbabf511)) by **GarlicRot**
 - `refactor(logs): improve logging across reminder commands and utils` – [`c3c6282`](https://github.com/GarlicRot/GarlicRemind/commit/c3c6282) by GarlicRot  
 - `feat(logging): send logs to Discord support channel` – [`c2b1860`](https://github.com/GarlicRot/GarlicRemind/commit/c2b1860) by GarlicRot  
 - `refactor(reminders): update all commands to use globalName for logging and remove user.tag usage` – [`8466011`](https://github.com/GarlicRot/GarlicRemind/commit/8466011) by GarlicRot
