@@ -48,7 +48,8 @@ module.exports = {
     });
 
     // Logging
-    const username = `${interaction.user.tag} (${interaction.user.id})`;
+    const user = interaction.user;
+    const username = `${user.globalName || user.username} (${user.id})`;
     const channel = interaction.channel?.name || "DM";
     logger.success(`📘 Help command used by ${username} in ${channel}`);
   },

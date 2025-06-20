@@ -35,9 +35,11 @@ async function loadReminders(client) {
     for (const reminder of reminders) {
       const timeLeft = reminder.remindAt - Date.now();
 
+      const userTag = await logger.getUsername(client, reminder.userId);
+
       if (timeLeft <= 0) {
         logger.warn(
-          `⏰ Overdue reminder for ${reminder.userId} (ID: ${
+          `⏰ Overdue reminder for ${userTag} (ID: ${
             reminder.id
           }) overdue by ${Math.abs(timeLeft)}ms`
         );
@@ -68,7 +70,7 @@ async function loadReminders(client) {
           });
 
           logger.success(
-            `✅ Sent overdue reminder (ID: ${reminder.id}) for ${reminder.userId}`
+            `✅ Sent overdue reminder (ID: ${reminder.id}) for ${userTag}`
           );
           await removeReminder(reminder.id);
         } catch (err) {
@@ -95,8 +97,10 @@ async function scheduleReminder(reminder, client) {
     .doc(reminder.id)
     .set(reminder);
 
+  const userTag = await logger.getUsername(client, reminder.userId);
+
   logger.success(
-    `⏰ Reminder saved for ${reminder.userId} (ID: ${reminder.id}) – ${new Date(
+    `⏰ Reminder saved for ${userTag} (ID: ${reminder.id}) – ${new Date(
       reminder.remindAt
     ).toISOString()} in channel ${reminder.channelId}`
   );
@@ -136,8 +140,10 @@ async function scheduleSingle(reminder, client) {
           embeds: [embed],
         });
 
+        const userTag = await logger.getUsername(client, reminder.userId);
+
         logger.success(
-          `🔔 Reminder sent to ${reminder.userId} in ${reminder.channelId} (ID: ${reminder.id})`
+          `🔔 Reminder sent to ${userTag} in ${reminder.channelId} (ID: ${reminder.id})`
         );
 
         await removeReminder(reminder.id);
@@ -150,8 +156,10 @@ async function scheduleSingle(reminder, client) {
 
     activeTimeouts[reminder.id] = timeout;
   } catch (err) {
+    const userTag = await logger.getUsername(client, reminder.userId);
+
     logger.warn(
-      `⚠️ Could not schedule reminder (ID: ${reminder.id}) for ${reminder.userId}: ${err.message}`
+      `⚠️ Could not schedule reminder (ID: ${reminder.id}) for ${userTag}: ${err.message}`
     );
 
     try {

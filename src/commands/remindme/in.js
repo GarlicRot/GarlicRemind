@@ -63,10 +63,10 @@ module.exports = {
   name: "in",
 
   async execute(interaction) {
-    const userId = interaction.user.id;
+    const user = interaction.user;
+    const userId = user.id;
     const client = interaction.client;
-    const channelId =
-      interaction.channel?.id || (await interaction.user.createDM()).id;
+    const channelId = interaction.channel?.id || (await user.createDM()).id;
 
     const duration = interaction.options.getString("duration");
     const rawMessage = interaction.options.getString("message");
@@ -118,13 +118,13 @@ module.exports = {
       client
     );
 
-    const username = `${interaction.user.tag} (${interaction.user.id})`;
-    const channel = interaction.channel?.name || "DM";
+    const username = `${user.globalName || user.username} (${user.id})`;
+    const channelName = interaction.channel?.name || "DM";
 
     logger.success(
       `${
         reminderId ? "✏️ Edited" : "⏰ Created"
-      } reminder in ${duration} (${id}) by ${username} in ${channel}`
+      } reminder in ${duration} (${id}) by ${username} in ${channelName}`
     );
   },
 

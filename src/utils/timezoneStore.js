@@ -36,12 +36,13 @@ async function setUserTimezone(userId, timezone) {
       expiresAt: Date.now() + CACHE_TTL,
     });
 
-    logger.success(
-      `🌍 Saved timezone for ${formatUserId(userId)} → ${timezone}`
-    );
+    const username = await logger.getUsername(global.client, userId);
+
+    logger.success(`🌍 Saved timezone for ${username} → ${timezone}`);
   } catch (error) {
+    const username = await logger.getUsername(global.client, userId);
     logger.error(
-      `❌ Failed to save timezone for ${formatUserId(userId)}: ${error.message}`
+      `❌ Failed to save timezone for ${username}: ${error.message}`
     );
   }
 }
@@ -54,8 +55,10 @@ async function setUserTimezone(userId, timezone) {
 async function getUserTimezone(userId) {
   const cached = timezoneCache.get(userId);
 
+  const username = await logger.getUsername(global.client, userId);
+
   if (cached && cached.expiresAt > Date.now()) {
-    logger.info(`⚡ Cache hit for ${formatUserId(userId)} → ${cached.value}`);
+    logger.info(`⚡ Cache hit for ${username} → ${cached.value}`);
     return cached.value;
   }
 
@@ -70,28 +73,12 @@ async function getUserTimezone(userId) {
       });
     }
 
-    logger.info(
-      `📡 Fetched timezone for ${formatUserId(userId)} → ${timezone || "none"}`
-    );
+    logger.info(`📡 Fetched timezone for ${username} → ${timezone || "none"}`);
     return timezone;
   } catch (error) {
-    logger.error(
-      `❌ Failed to get timezone for ${formatUserId(userId)}: ${error.message}`
-    );
+    logger.error(`❌ Failed to get timezone for ${username}: ${error.message}`);
     return null;
   }
-}
-
-/**
- * Formats a userId for display in logs.
- * @param {string|object} userId
- * @returns {string}
- */
-function formatUserId(userId) {
-  if (typeof userId === "object" && userId.tag && userId.id) {
-    return `${userId.tag} (${userId.id})`;
-  }
-  return userId || "Unknown User";
 }
 
 module.exports = {

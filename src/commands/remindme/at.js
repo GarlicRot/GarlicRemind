@@ -161,11 +161,11 @@ module.exports = {
       client
     );
 
-    const username = `${interaction.user.tag} (${interaction.user.id})`;
-    const channel = interaction.channel?.name || "DM";
+    const username = await logger.getUsername(client, userId);
+    const channelName = interaction.channel?.name || "DM";
 
     logger.success(
-      `⏱️ Reminder set by ${username} in ${channel} — Time: ${timeStr}, Message: "${message}", ID: ${id}`
+      `⏱️ Reminder set by ${username} in ${channelName} — Time: ${timeStr}, Message: "${message}", ID: ${id}`
     );
   },
 };

@@ -71,10 +71,10 @@ module.exports = {
   name: "on",
 
   async execute(interaction) {
-    const userId = interaction.user.id;
+    const user = interaction.user;
+    const userId = user.id;
     const client = interaction.client;
-    const channelId =
-      interaction.channel?.id || (await interaction.user.createDM()).id;
+    const channelId = interaction.channel?.id || (await user.createDM()).id;
 
     const timezone = await getUserTimezone(userId);
     if (!timezone) {
@@ -160,7 +160,7 @@ module.exports = {
       client
     );
 
-    const username = `${interaction.user.tag} (${interaction.user.id})`;
+    const username = `${user.globalName || user.username} (${user.id})`;
     const channel = interaction.channel?.name || "DM";
 
     logger.success(

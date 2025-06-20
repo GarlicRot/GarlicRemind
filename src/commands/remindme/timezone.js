@@ -23,7 +23,8 @@ module.exports = {
   name: "timezone",
 
   async execute(interaction) {
-    const userId = interaction.user.id;
+    const user = interaction.user;
+    const userId = user.id;
     const zone = interaction.options.getString("zone");
 
     if (!allTimezones.includes(zone)) {
@@ -41,7 +42,7 @@ module.exports = {
     }
 
     await setUserTimezone(userId, zone);
-    const username = `${interaction.user.tag} (${interaction.user.id})`;
+    const username = `${user.globalName || user.username} (${user.id})`;
     logger.success(`🌍 ${username} set timezone to ${zone}`);
 
     return interaction.reply({

@@ -43,7 +43,7 @@ module.exports = {
 
     await removeReminder(reminder.id);
 
-    const username = `${interaction.user.tag} (${interaction.user.id})`;
+    const username = await logger.getUsername(interaction.client, userId);
     const channel = interaction.channel?.name || "DM";
 
     logger.success(

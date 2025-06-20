@@ -56,7 +56,6 @@ module.exports = {
 
     const userId = interaction.user.id;
     const client = interaction.client;
-
     const channelId =
       interaction.channel?.id || (await interaction.user.createDM()).id;
 
@@ -154,7 +153,7 @@ module.exports = {
       ],
     });
 
-    const username = `${interaction.user.tag} (${interaction.user.id})`;
+    const username = await logger.getUsername(client, userId);
     const channel = interaction.channel?.name || "DM";
 
     logger.success(

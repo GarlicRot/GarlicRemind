@@ -21,6 +21,7 @@ const chalk = require("chalk");
 require("dotenv").config();
 
 let discordClient = null;
+const userCache = new Map();
 
 function setDiscordClient(client) {
   discordClient = client;
@@ -43,6 +44,22 @@ async function sendToDiscord(type, message) {
       chalk.yellow("[WARN] Failed to post log to Discord:"),
       err.message
     );
+  }
+}
+
+/**
+ * Returns a formatted username string with fallback.
+ * Cached for performance.
+ */
+async function getUsername(client, userId) {
+  if (userCache.has(userId)) return userCache.get(userId);
+  try {
+    const user = await client.users.fetch(userId);
+    const tag = `${user.globalName || user.username} (${user.id})`;
+    userCache.set(userId, tag);
+    return tag;
+  } catch {
+    return `Unknown User (${userId})`;
   }
 }
 
@@ -80,6 +97,7 @@ const logger = {
   },
 
   setDiscordClient,
+  getUsername,
 };
 
 module.exports = logger;

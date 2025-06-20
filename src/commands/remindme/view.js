@@ -20,9 +20,11 @@ module.exports = {
   name: "view",
 
   async execute(interaction) {
-    const userId = interaction.user.id;
+    const user = interaction.user;
+    const userId = user.id;
+    const username = `${user.globalName || user.username} (${userId})`;
+
     const reminders = (await getReminders()).filter((r) => r.userId === userId);
-    const username = `${interaction.user.tag} (${userId})`;
 
     if (reminders.length === 0) {
       logger.success(`📭 ${username} viewed 0 active reminders`);
