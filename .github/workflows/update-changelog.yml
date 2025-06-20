@@ -15,7 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🔧 Set up Git
+      - name: Set up Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -25,8 +25,8 @@ jobs:
         run: |
           COMMIT_HASH=$(git log -1 --pretty=format:'%H')
           COMMIT_DATE=$(git log -1 --pretty=format:'%ad' --date=format:'%Y-%m-%d')
-          COMMIT_MSG=$(git log -1 --pretty=format:'%s')
-          COMMIT_AUTHOR=$(git log -1 --pretty=format:'%an')
+          COMMIT_MSG=$(git log -1 --pretty=format:"%s")
+          COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an")
           echo "hash=$COMMIT_HASH" >> $GITHUB_OUTPUT
           echo "date=$COMMIT_DATE" >> $GITHUB_OUTPUT
           echo "msg=$COMMIT_MSG" >> $GITHUB_OUTPUT
@@ -34,16 +34,16 @@ jobs:
 
       - name: Append commit to CHANGELOG.md
         run: |
-          HASH=${{ steps.last_commit.outputs.hash }}
-          DATE=${{ steps.last_commit.outputs.date }}
-          MSG=${{ steps.last_commit.outputs.msg }}
-          AUTHOR=${{ steps.last_commit.outputs.author }}
+          HASH="${{ steps.last_commit.outputs.hash }}"
+          DATE="${{ steps.last_commit.outputs.date }}"
+          MSG="${{ steps.last_commit.outputs.msg }}"
+          AUTHOR="${{ steps.last_commit.outputs.author }}"
           SHORT_HASH=$(echo "$HASH" | cut -c1-7)
 
           # Format line
-          ENTRY="- \`${MSG}\` – [\`${SHORT_HASH}\`](https://github.com/${{ github.repository }}/commit/${HASH}) by ${AUTHOR}"
+          ENTRY="- \`${MSG}\` ([\`${SHORT_HASH}\`](https://github.com/${{ github.repository }}/commit/${HASH})) by **${AUTHOR}**"
 
-          # Insert under matching date or create new section
+          # Insert under existing date or create new section
           if grep -q "### 📅 ${DATE}" CHANGELOG.md; then
             sed -i "/### 📅 ${DATE}/a ${ENTRY}" CHANGELOG.md
           else
