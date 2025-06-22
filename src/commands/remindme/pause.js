@@ -1,0 +1,132 @@
+/**
+ * -----------------------------------------------------------
+ * GarlicRemind - Pause Reminder Command
+ * -----------------------------------------------------------
+ *
+ * Description: Slash command to pause a recurring reminder.
+ *              Only recurring and active reminders are shown
+ *              in the autocomplete dropdown.
+ *
+ * Created by: GarlicRot
+ * GitHub: https://github.com/GarlicRot
+ *
+ * -----------------------------------------------------------
+ * © 2025 GarlicRemind. All Rights Reserved.
+ * -----------------------------------------------------------
+ */
+
+const { SlashCommandBuilder } = require("discord.js");
+const { db } = require("../config/firebase");
+const { buildEmbed } = require("../utils/embedBuilder");
+const logger = require("../utils/logger");
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName("pause")
+    .setDescription("Pause a recurring reminder.")
+    .addStringOption((option) =>
+      option
+        .setName("reminder")
+        .setDescription("Select the reminder to pause")
+        .setRequired(true)
+        .setAutocomplete(true)
+    ),
+
+  async autocomplete(interaction) {
+    const snapshot = await db
+      .collection("discord")
+      .doc("reminders")
+      .collection("entries")
+      .where("userId", "==", interaction.user.id)
+      .get();
+
+    const reminders = snapshot.docs
+      .map((doc) => doc.data())
+      .filter((r) => r.recurring && !r.paused);
+
+    const input = interaction.options.getFocused().toLowerCase();
+
+    const choices = reminders
+      .filter((r) => r.message?.toLowerCase().includes(input))
+      .slice(0, 25)
+      .map((r) => ({
+        name:
+          r.message.length > 75 ? r.message.slice(0, 72) + "..." : r.message,
+        value: r.id,
+      }));
+
+    await interaction.respond(choices);
+  },
+
+  async execute(interaction) {
+    const reminderId = interaction.options.getString("reminder");
+
+    const docRef = db
+      .collection("discord")
+      .doc("reminders")
+      .collection("entries")
+      .doc(reminderId);
+
+    const doc = await docRef.get();
+    const reminder = doc.data();
+
+    if (!doc.exists || !reminder) {
+      return interaction.reply({
+        ephemeral: true,
+        embeds: [
+          buildEmbed({
+            title: "❌ Reminder not found",
+            description: "That reminder could not be found.",
+            type: "error",
+            interaction,
+          }),
+        ],
+      });
+    }
+
+    if (!reminder.recurring) {
+      return interaction.reply({
+        ephemeral: true,
+        embeds: [
+          buildEmbed({
+            title: "❌ Not a recurring reminder",
+            description: "Only recurring reminders can be paused.",
+            type: "error",
+            interaction,
+          }),
+        ],
+      });
+    }
+
+    if (reminder.paused) {
+      return interaction.reply({
+        ephemeral: true,
+        embeds: [
+          buildEmbed({
+            title: "⏸️ Already Paused",
+            description: "This reminder is already paused.",
+            type: "warning",
+            interaction,
+          }),
+        ],
+      });
+    }
+
+    await docRef.update({ paused: true });
+    logger.info(
+      `⏸️ Reminder paused (ID: ${reminderId}) for ${interaction.user.tag}`
+    );
+
+    return interaction.reply({
+      ephemeral: true,
+      embeds: [
+        buildEmbed({
+          title: "⏸️ Reminder Paused",
+          description: `Your recurring reminder has been paused.\n\n**Message:** ${reminder.message}`,
+          type: "success",
+          interaction,
+        }),
+      ],
+    });
+  },
+};

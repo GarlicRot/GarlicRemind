@@ -34,6 +34,12 @@ async function loadReminders(client) {
     logger.info(`🔁 Loaded ${reminders.length} reminder(s) from Firestore.`);
 
     for (const reminder of reminders) {
+      // ⏸️ Skip paused reminders
+      if (reminder.paused) {
+        logger.info(`⏸️ Skipping paused reminder: ${reminder.id}`);
+        continue;
+      }
+
       const timeLeft = reminder.remindAt - Date.now();
       const userTag = await logger.getUsername(client, reminder.userId);
 
@@ -89,6 +95,7 @@ async function loadReminders(client) {
 
 async function scheduleReminder(reminder, client) {
   reminder.id = reminder.id || uuidv4();
+  if (reminder.paused === undefined) reminder.paused = false; // Default if not set
 
   await db
     .collection("discord")
@@ -98,17 +105,25 @@ async function scheduleReminder(reminder, client) {
     .set(reminder);
 
   const userTag = await logger.getUsername(client, reminder.userId);
-
   logger.success(
     `⏰ Reminder saved for ${userTag} (ID: ${reminder.id}) – ${new Date(
       reminder.remindAt
     ).toISOString()} in channel ${reminder.channelId}`
   );
 
-  scheduleSingle(reminder, client);
+  if (!reminder.paused) {
+    scheduleSingle(reminder, client);
+  } else {
+    logger.info(`⏸️ Reminder ${reminder.id} is paused. Not scheduled.`);
+  }
 }
 
 async function scheduleSingle(reminder, client) {
+  if (reminder.paused) {
+    logger.info(`⏸️ Reminder ${reminder.id} is paused. Skipping schedule.`);
+    return;
+  }
+
   const delay = reminder.remindAt - Date.now();
   if (delay < 0) return;
 
@@ -141,12 +156,11 @@ async function scheduleSingle(reminder, client) {
         });
 
         const userTag = await logger.getUsername(client, reminder.userId);
-
         logger.success(
           `🔔 Reminder sent to ${userTag} in ${reminder.channelId} (ID: ${reminder.id})`
         );
 
-        // Recurring logic
+        // 🔁 Reschedule if recurring and not paused
         if (reminder.recurring && reminder.repeatMeta?.type) {
           const now = DateTime.fromMillis(reminder.remindAt);
           let next;
@@ -162,10 +176,10 @@ async function scheduleSingle(reminder, client) {
               next = now.plus({ months: 1 });
               break;
             case "weekdays":
-              let dayOffset = 1;
+              let offset = 1;
               do {
-                next = now.plus({ days: dayOffset++ });
-              } while (next.weekday > 5); // Monday–Friday
+                next = now.plus({ days: offset++ });
+              } while (next.weekday > 5);
               break;
             default:
               logger.warn(
@@ -176,7 +190,7 @@ async function scheduleSingle(reminder, client) {
 
           if (next) {
             reminder.remindAt = next.toMillis();
-            await scheduleReminder(reminder, client); // Reschedule
+            await scheduleReminder(reminder, client);
           } else {
             await removeReminder(reminder.id);
           }

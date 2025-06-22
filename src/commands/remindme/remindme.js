@@ -192,6 +192,30 @@ module.exports = {
             .setAutocomplete(true)
         )
     )
+    .addSubcommand((sub) =>
+      sub
+        .setName("pause")
+        .setDescription("Pause a recurring reminder")
+        .addStringOption((opt) =>
+          opt
+            .setName("reminder")
+            .setRequired(true)
+            .setAutocomplete(true)
+            .setDescription("Select recurring reminder to pause")
+        )
+    )
+    .addSubcommand((sub) =>
+      sub
+        .setName("resume")
+        .setDescription("Resume a paused recurring reminder")
+        .addStringOption((opt) =>
+          opt
+            .setName("reminder")
+            .setRequired(true)
+            .setAutocomplete(true)
+            .setDescription("Select paused reminder to resume")
+        )
+    )
     .setDMPermission(true),
 
   async execute(interaction) {
@@ -254,6 +278,16 @@ module.exports = {
       const cancelHandler = require("./cancel");
       return cancelHandler.execute(interaction);
     }
+
+    if (sub === "pause") {
+      const pauseHandler = require("./pause");
+      return pauseHandler.execute(interaction);
+    }
+
+    if (sub === "resume") {
+      const resumeHandler = require("./resume");
+      return resumeHandler.execute(interaction);
+    }
   },
 
   async autocomplete(interaction) {
@@ -280,13 +314,11 @@ module.exports = {
         .plus({ minutes: 5 - (now.minute % 5) })
         .set({ second: 0, millisecond: 0 });
 
-      // Suggest DD-MM-YYYY format for /remindme on
       if (sub === "on" && focusedOption.name === "date") {
         const dateStr = now.toFormat("MM-dd-yyyy");
         return interaction.respond([{ name: dateStr, value: dateStr }]);
       }
 
-      // Suggest rounded 5-minute time values
       if ((sub === "on" || sub === "at") && focusedOption.name === "time") {
         const times = [];
         for (let i = 0; i < 5; i++) {
@@ -298,36 +330,21 @@ module.exports = {
         return interaction.respond(times);
       }
 
-      // Reminder autocomplete for /cancel
       if (sub === "cancel" && focusedOption.name === "reminder") {
-        const reminders = (await getReminders()).filter(
-          (r) => r.userId === interaction.user.id
-        );
-
-        const timezone = await getUserTimezone(interaction.user.id);
-
-        const choices = reminders
-          .map((r) => {
-            const time = timezone
-              ? DateTime.fromMillis(r.remindAt).setZone(timezone).toFormat("f")
-              : new Date(r.remindAt).toLocaleString();
-
-            return {
-              name: `${r.message || "*No message*"} – ${time}`,
-              value: r.id,
-            };
-          })
-          .filter((choice) =>
-            choice.name
-              .toLowerCase()
-              .includes(focusedOption.value.toLowerCase())
-          )
-          .slice(0, 25);
-
-        return interaction.respond(choices);
+        const cancelHandler = require("./cancel");
+        return cancelHandler.autocomplete(interaction);
       }
 
-      // Timezone autocomplete
+      if (sub === "pause" && focusedOption.name === "reminder") {
+        const pauseHandler = require("./pause");
+        return pauseHandler.autocomplete(interaction);
+      }
+
+      if (sub === "resume" && focusedOption.name === "reminder") {
+        const resumeHandler = require("./resume");
+        return resumeHandler.autocomplete(interaction);
+      }
+
       if (sub === "timezone" && focusedOption.name === "zone") {
         const input = focusedOption.value.toLowerCase();
         const matches = allTimezones
