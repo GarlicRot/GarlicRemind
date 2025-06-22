@@ -124,18 +124,17 @@ module.exports = {
       repeatMeta.userDayOfMonth = now.day;
     }
 
-    await scheduleReminder(
-      {
-        id,
-        userId,
-        channelId,
-        remindAt: target.toMillis(),
-        message,
-        recurring: true,
-        repeatMeta,
-      },
-      client
-    );
+    const reminderData = {
+      id,
+      userId,
+      channelId,
+      remindAt: target.toMillis(),
+      message,
+      recurring: true,
+      repeatMeta,
+    };
+
+    await scheduleReminder(reminderData, client);
 
     const description =
       `**Repeats:** Every ${intervalRaw} at ${timeStr}\n` +

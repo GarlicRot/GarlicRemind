@@ -18,6 +18,7 @@ const { v4: uuidv4 } = require("uuid");
 const { buildEmbed } = require("./embedBuilder");
 const logger = require("./logger");
 const { db } = require("../config/firebase");
+const { DateTime } = require("luxon");
 
 const activeTimeouts = {};
 
@@ -34,7 +35,6 @@ async function loadReminders(client) {
 
     for (const reminder of reminders) {
       const timeLeft = reminder.remindAt - Date.now();
-
       const userTag = await logger.getUsername(client, reminder.userId);
 
       if (timeLeft <= 0) {
@@ -146,7 +146,43 @@ async function scheduleSingle(reminder, client) {
           `🔔 Reminder sent to ${userTag} in ${reminder.channelId} (ID: ${reminder.id})`
         );
 
-        await removeReminder(reminder.id);
+        // Recurring logic
+        if (reminder.recurring && reminder.repeatMeta?.type) {
+          const now = DateTime.fromMillis(reminder.remindAt);
+          let next;
+
+          switch (reminder.repeatMeta.type) {
+            case "daily":
+              next = now.plus({ days: 1 });
+              break;
+            case "weekly":
+              next = now.plus({ weeks: 1 });
+              break;
+            case "monthly":
+              next = now.plus({ months: 1 });
+              break;
+            case "weekdays":
+              let dayOffset = 1;
+              do {
+                next = now.plus({ days: dayOffset++ });
+              } while (next.weekday > 5); // Monday–Friday
+              break;
+            default:
+              logger.warn(
+                `⚠️ Unknown repeat type: ${reminder.repeatMeta.type}`
+              );
+              next = null;
+          }
+
+          if (next) {
+            reminder.remindAt = next.toMillis();
+            await scheduleReminder(reminder, client); // Reschedule
+          } else {
+            await removeReminder(reminder.id);
+          }
+        } else {
+          await removeReminder(reminder.id);
+        }
       } catch (sendErr) {
         logger.error(
           `❌ Failed to send reminder (ID: ${reminder.id}): ${sendErr.message}`
