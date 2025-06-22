@@ -1,36 +1,23 @@
 /**
  * -----------------------------------------------------------
- * GarlicRemind - Pause Reminder Command
+ * GarlicRemind - Subcommand: /remindme pause
  * -----------------------------------------------------------
  *
- * Description: Slash command to pause a recurring reminder.
- *              Only recurring and active reminders are shown
- *              in the autocomplete dropdown.
+ * Description: Pauses a recurring reminder (must not already be paused).
  *
  * Created by: GarlicRot
  * GitHub: https://github.com/GarlicRot
- *
  * -----------------------------------------------------------
  * © 2025 GarlicRemind. All Rights Reserved.
  * -----------------------------------------------------------
  */
 
-const { SlashCommandBuilder } = require("discord.js");
-const { db } = require("../config/firebase");
-const { buildEmbed } = require("../utils/embedBuilder");
-const logger = require("../utils/logger");
+const { db } = require("../../utils/reminderStore");
+const { buildEmbed } = require("../../utils/embedBuilder");
+const logger = require("../../utils/logger");
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("pause")
-    .setDescription("Pause a recurring reminder.")
-    .addStringOption((option) =>
-      option
-        .setName("reminder")
-        .setDescription("Select the reminder to pause")
-        .setRequired(true)
-        .setAutocomplete(true)
-    ),
+  name: "pause",
 
   async autocomplete(interaction) {
     const snapshot = await db

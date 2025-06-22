@@ -1,37 +1,23 @@
 /**
  * -----------------------------------------------------------
- * GarlicRemind - Resume Reminder Command
+ * GarlicRemind - Subcommand: /remindme resume
  * -----------------------------------------------------------
  *
- * Description: Slash command to resume a previously paused
- *              recurring reminder. Autocompletion lists only
- *              recurring reminders that are currently paused.
+ * Description: Resumes a paused recurring reminder.
  *
  * Created by: GarlicRot
  * GitHub: https://github.com/GarlicRot
- *
  * -----------------------------------------------------------
  * © 2025 GarlicRemind. All Rights Reserved.
  * -----------------------------------------------------------
  */
 
-const { SlashCommandBuilder } = require("discord.js");
-const { db } = require("../config/firebase");
-const { buildEmbed } = require("../utils/embedBuilder");
-const logger = require("../utils/logger");
-const { scheduleReminder } = require("../utils/reminderStore");
+const { db, scheduleReminder } = require("../../utils/reminderStore");
+const { buildEmbed } = require("../../utils/embedBuilder");
+const logger = require("../../utils/logger");
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("resume")
-    .setDescription("Resume a paused recurring reminder.")
-    .addStringOption((option) =>
-      option
-        .setName("reminder")
-        .setDescription("Select the paused reminder to resume")
-        .setRequired(true)
-        .setAutocomplete(true)
-    ),
+  name: "resume",
 
   async autocomplete(interaction) {
     const snapshot = await db
