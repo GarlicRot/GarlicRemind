@@ -70,3 +70,8 @@ All notable changes to **GarlicRemind** are documented here.
 - `refactor(logs): improve logging across reminder commands and utils` – [`c3c6282`](https://github.com/GarlicRot/GarlicRemind/commit/c3c6282) by GarlicRot  
 - `feat(logging): send logs to Discord support channel` – [`c2b1860`](https://github.com/GarlicRot/GarlicRemind/commit/c2b1860) by GarlicRot  
 - `refactor(reminders): update all commands to use globalName for logging and remove user.tag usage` – [`8466011`](https://github.com/GarlicRot/GarlicRemind/commit/8466011) by GarlicRot
+
+---
+
+### 📅 2025-06-22
+- `fix(reminders): properly reschedule recurring reminders after execution` ([`fc186da`](https://github.com/GarlicRot/GarlicRemind/commit/fc186da99f330777c411bc4ce523eb545db0f213)) by **GarlicRot**
