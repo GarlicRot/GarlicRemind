@@ -32,6 +32,8 @@ module.exports = {
       "**/remindme view** — View your active reminders",
       "**/remindme cancel** — Cancel a specific reminder",
       "**/remindme clear** — Clear all your reminders",
+      "**/remindme pause** — Pause a recurring reminder",
+      "**/remindme resume** — Resume a paused recurring reminder",
       "**/remindme timezone** — Set your local timezone for accurate scheduling",
     ].join("\n");
 
