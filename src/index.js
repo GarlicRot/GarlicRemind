@@ -21,10 +21,7 @@ const path = require("path");
 const { Client, Collection, GatewayIntentBits } = require("discord.js");
 
 const logger = require("./utils/logger");
-const {
-  loadReminders,
-  getActiveRemindersCount,
-} = require("./utils/reminderStore");
+const { loadReminders } = require("./utils/reminderStore");
 const { updateVoiceCounters } = require("./utils/voiceCounter");
 
 // -----------------------------------------------------------
@@ -86,11 +83,11 @@ client.once("ready", async () => {
   await loadReminders(client);
 
   // Update counters immediately on boot
-  await updateVoiceCounters(client, getActiveRemindersCount);
+  await updateVoiceCounters(client);
 
   // Update every 30 minutes
   setInterval(() => {
-    updateVoiceCounters(client, getActiveRemindersCount);
+    updateVoiceCounters(client);
   }, 1000 * 60 * 30);
 });
 
