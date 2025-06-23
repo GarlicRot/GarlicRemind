@@ -74,6 +74,7 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-06-22
+- `fix: Correct user counting across all servers` ([`2d642dc`](https://github.com/GarlicRot/GarlicRemind/commit/2d642dc6d35d1ad30d6d20fc73925f8e53259b34)) by **GarlicRot**
 - `fix: Correct user counting and add required intents` ([`6b3388d`](https://github.com/GarlicRot/GarlicRemind/commit/6b3388d993413693e895d277fb8a3ed73ff51250)) by **GarlicRot**
 - `fix(index): correctly count unique users across all guilds for voice channel counter` ([`ca8233f`](https://github.com/GarlicRot/GarlicRemind/commit/ca8233ffe771c2af35576cef7993692f0e79a128)) by **GarlicRot**
 - `feat: add voice channel counter for server and user stats` ([`24f9b88`](https://github.com/GarlicRot/GarlicRemind/commit/24f9b88c2594a06caaf3d218cf584154644f7dfe)) by **GarlicRot**
