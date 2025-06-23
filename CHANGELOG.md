@@ -74,6 +74,7 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-06-22
+- `fix(logger): improve getUsername fallback by using global or discordClient reference` ([`8bd2df3`](https://github.com/GarlicRot/GarlicRemind/commit/8bd2df3b4cc2313be10de77a72b750cbb133e3ea)) by **GarlicRot**
 - `fix(remindme/resume): ensure resumed reminders are saved with paused set to false` ([`59a5454`](https://github.com/GarlicRot/GarlicRemind/commit/59a5454adeaad002e083e06241623c67330ce7ed)) by **GarlicRot**
 - `fix: ensure resume command sets paused to false by including reminder ID in autocomplete choices` ([`172a847`](https://github.com/GarlicRot/GarlicRemind/commit/172a8477a5c634dd414e717c82c671080b681bdf)) by **GarlicRot**
 - `fix: correct import of scheduleReminder in resume command` ([`3e11dac`](https://github.com/GarlicRot/GarlicRemind/commit/3e11daceb8b7e8a7cb73c351f2784ace86c0bb16)) by **GarlicRot**
