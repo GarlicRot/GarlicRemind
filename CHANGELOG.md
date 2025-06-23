@@ -91,6 +91,7 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-06-23
+- `docs: update README with /remindme pause and resume commands` ([`7c4fed4`](https://github.com/GarlicRot/GarlicRemind/commit/7c4fed425a126f3c1cd471231387ba80bdf8dc4c)) by **GarlicRot**
 - `Update voiceCounter.js to use getReminders for active reminders count` ([`49eb446`](https://github.com/GarlicRot/GarlicRemind/commit/49eb44655fd866529659750e50a2ad76865af044)) by **GarlicRot**
 - `Refactor voice counter update logic` ([`5b20fdd`](https://github.com/GarlicRot/GarlicRemind/commit/5b20fdd7e1c4115935f86fc83eb2b671cbf6b022)) by **GarlicRot**
 - `Merge branch 'main' of https://github.com/GarlicRot/GarlicRemind` ([`f471b49`](https://github.com/GarlicRot/GarlicRemind/commit/f471b491c66fa5c52a17536f4d4fd070376774e4)) by **GarlicRot**
