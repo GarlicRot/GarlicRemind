@@ -74,6 +74,7 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-06-22
+- `fix(index): correctly count unique users across all guilds for voice channel counter` ([`ca8233f`](https://github.com/GarlicRot/GarlicRemind/commit/ca8233ffe771c2af35576cef7993692f0e79a128)) by **GarlicRot**
 - `feat: add voice channel counter for server and user stats` ([`24f9b88`](https://github.com/GarlicRot/GarlicRemind/commit/24f9b88c2594a06caaf3d218cf584154644f7dfe)) by **GarlicRot**
 - `fix(logger): improve getUsername fallback by using global or discordClient reference` ([`8bd2df3`](https://github.com/GarlicRot/GarlicRemind/commit/8bd2df3b4cc2313be10de77a72b750cbb133e3ea)) by **GarlicRot**
 - `fix(remindme/resume): ensure resumed reminders are saved with paused set to false` ([`59a5454`](https://github.com/GarlicRot/GarlicRemind/commit/59a5454adeaad002e083e06241623c67330ce7ed)) by **GarlicRot**
