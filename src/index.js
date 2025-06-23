@@ -92,11 +92,20 @@ async function updateVoiceCounters() {
     }
 
     if (userCountChannel) {
-      const allMembers = await Promise.all(
-        client.guilds.cache.map(async (g) => (await g.members.fetch()).size)
-      );
-      const totalUsers = allMembers.reduce((sum, count) => sum + count, 0);
-      await userCountChannel.setName(`Individual Users: ${totalUsers}`);
+      const userIds = new Set();
+
+      for (const guild of client.guilds.cache.values()) {
+        try {
+          const members = await guild.members.fetch();
+          members.forEach((m) => userIds.add(m.user.id));
+        } catch (err) {
+          logger.warn(
+            `⚠️ Failed to fetch members for ${guild.name}: ${err.message}`
+          );
+        }
+      }
+
+      await userCountChannel.setName(`Individual Users: ${userIds.size}`);
     }
 
     logger.success("📈 Voice channel counters updated successfully.");
