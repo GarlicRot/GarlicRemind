@@ -89,14 +89,23 @@ async function updateVoiceCounters() {
       );
     }
 
+    let uniqueUsersCount = 0;
+
     if (userCountChannel) {
-      // Use client's user cache for unique users
-      const uniqueUsers = client.users.cache.size;
-      await userCountChannel.setName(`👤 Individual Users: ${uniqueUsers}`);
+      // Count unique users across all guilds
+      const uniqueUsers = new Set();
+
+      for (const guild of client.guilds.cache.values()) {
+        guild.members.cache.forEach((member) => uniqueUsers.add(member.id));
+      }
+
+      uniqueUsersCount = uniqueUsers.size;
+      await userCountChannel.setName(`👤 Users: ${uniqueUsersCount}`);
     }
 
+    // Updated to log the actual uniqueUsersCount we're displaying
     logger.success(
-      `📈 Updated counters: ${client.guilds.cache.size} servers, ${client.users.cache.size} users`
+      `📈 Updated counters: ${client.guilds.cache.size} servers, ${uniqueUsersCount} users`
     );
   } catch (err) {
     logger.error(`❌ Counters update failed: ${err.message}`);
