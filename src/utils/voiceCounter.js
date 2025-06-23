@@ -16,7 +16,7 @@
  * -----------------------------------------------------------
  */
 
-const { getActiveRemindersCount } = require("./reminderStore");
+const { getReminders } = require("./reminderStore");
 
 const SUPPORT_GUILD_ID = process.env.SUPPORT_GUILD_ID;
 const SERVER_COUNT_CHANNEL_ID = process.env.SERVER_COUNT_CHANNEL_ID;
@@ -32,7 +32,10 @@ async function updateVoiceCounters(client) {
     if (!guild) return;
 
     const serverCount = client.guilds.cache.size;
-    const activeRemindersCount = await getActiveRemindersCount();
+    const reminders = await getReminders();
+    const activeRemindersCount = reminders.filter(
+      (reminder) => !reminder.paused
+    ).length;
 
     const serverChannel = await client.channels.fetch(SERVER_COUNT_CHANNEL_ID);
     const remindersChannel = await client.channels.fetch(

@@ -261,21 +261,9 @@ async function getReminders() {
   return snapshot.docs.map((doc) => doc.data());
 }
 
-async function getActiveRemindersCount() {
-  const snapshot = await db
-    .collection("discord")
-    .doc("reminders")
-    .collection("entries")
-    .where("paused", "==", false)
-    .get();
-
-  return snapshot.size;
-}
-
 module.exports = {
   loadReminders,
   scheduleReminder,
   removeReminder,
   getReminders,
-  getActiveRemindersCount,
 };
