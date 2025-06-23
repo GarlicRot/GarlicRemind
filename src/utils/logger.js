@@ -52,7 +52,9 @@ async function sendToDiscord(type, message) {
  * Cached for performance.
  */
 async function getUsername(client, userId) {
+  client = client || discordClient || global.client;
   if (userCache.has(userId)) return userCache.get(userId);
+
   try {
     const user = await client.users.fetch(userId);
     const tag = `${user.globalName || user.username} (${user.id})`;
