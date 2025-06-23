@@ -30,7 +30,7 @@ module.exports = {
         .get();
 
       const reminders = snapshot.docs
-        .map((doc) => doc.data())
+        .map((doc) => ({ id: doc.id, ...doc.data() })) // ✅ include document ID
         .filter((r) => r.recurring && r.paused);
 
       const input = interaction.options.getFocused().toLowerCase();
@@ -55,6 +55,20 @@ module.exports = {
 
   async execute(interaction) {
     const reminderId = interaction.options.getString("reminder");
+
+    if (!reminderId) {
+      return interaction.reply({
+        ephemeral: true,
+        embeds: [
+          buildEmbed({
+            title: "❌ Invalid Selection",
+            description: "No reminder was selected. Please try again.",
+            type: "error",
+            interaction,
+          }),
+        ],
+      });
+    }
 
     try {
       const docRef = db
@@ -108,8 +122,12 @@ module.exports = {
         });
       }
 
-      await docRef.update({ paused: false });
-      await scheduleReminder(reminder, interaction.client);
+      await docRef.update({ paused: false }); // ✅ actually resume the reminder
+      await scheduleReminder(
+        { ...reminder, id: reminderId },
+        interaction.client
+      );
+
       logger.info(
         `▶️ Reminder resumed (ID: ${reminderId}) for ${interaction.user.tag}`
       );
