@@ -12,7 +12,8 @@
  * -----------------------------------------------------------
  */
 
-const { db, scheduleReminder } = require("../../config/firebase");
+const { db } = require("../../config/firebase");
+const { scheduleReminder } = require("../../utils/reminderStore");
 const { buildEmbed } = require("../../utils/embedBuilder");
 const logger = require("../../utils/logger");
 
