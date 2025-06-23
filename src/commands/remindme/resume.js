@@ -58,7 +58,7 @@ module.exports = {
 
     if (!reminderId) {
       return interaction.reply({
-        ephemeral: true,
+        flags: 64,
         embeds: [
           buildEmbed({
             title: "❌ Invalid Selection",
@@ -82,7 +82,7 @@ module.exports = {
 
       if (!doc.exists || !reminder) {
         return interaction.reply({
-          ephemeral: true,
+          flags: 64,
           embeds: [
             buildEmbed({
               title: "❌ Reminder not found",
@@ -96,7 +96,7 @@ module.exports = {
 
       if (!reminder.recurring) {
         return interaction.reply({
-          ephemeral: true,
+          flags: 64,
           embeds: [
             buildEmbed({
               title: "❌ Not a recurring reminder",
@@ -110,7 +110,7 @@ module.exports = {
 
       if (!reminder.paused) {
         return interaction.reply({
-          ephemeral: true,
+          flags: 64,
           embeds: [
             buildEmbed({
               title: "⚠️ Reminder Not Paused",
@@ -122,18 +122,15 @@ module.exports = {
         });
       }
 
-      await docRef.update({ paused: false }); // ✅ actually resume the reminder
-      await scheduleReminder(
-        { ...reminder, id: reminderId },
-        interaction.client
-      );
+      const updatedReminder = { ...reminder, paused: false, id: reminderId };
+      await scheduleReminder(updatedReminder, interaction.client);
 
       logger.info(
         `▶️ Reminder resumed (ID: ${reminderId}) for ${interaction.user.tag}`
       );
 
       return interaction.reply({
-        ephemeral: true,
+        flags: 64,
         embeds: [
           buildEmbed({
             title: "▶️ Reminder Resumed",
@@ -148,7 +145,7 @@ module.exports = {
     } catch (err) {
       logger.error("Failed to resume reminder:", err);
       return interaction.reply({
-        ephemeral: true,
+        flags: 64,
         embeds: [
           buildEmbed({
             title: "❌ Error",
