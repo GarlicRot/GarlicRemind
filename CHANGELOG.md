@@ -91,4 +91,5 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-06-23
+- `Refactor voice counter update logic` ([`5b20fdd`](https://github.com/GarlicRot/GarlicRemind/commit/5b20fdd7e1c4115935f86fc83eb2b671cbf6b022)) by **GarlicRot**
 - `Merge branch 'main' of https://github.com/GarlicRot/GarlicRemind` ([`f471b49`](https://github.com/GarlicRot/GarlicRemind/commit/f471b491c66fa5c52a17536f4d4fd070376774e4)) by **GarlicRot**
