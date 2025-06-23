@@ -21,7 +21,11 @@ const path = require("path");
 const { Client, Collection, GatewayIntentBits } = require("discord.js");
 
 const logger = require("./utils/logger");
-const { loadReminders } = require("./utils/reminderStore");
+const {
+  loadReminders,
+  getActiveRemindersCount,
+} = require("./utils/reminderStore");
+const { updateVoiceCounters } = require("./utils/voiceCounter");
 
 // -----------------------------------------------------------
 // Initialize Discord Client
@@ -70,48 +74,6 @@ for (const file of eventFiles) {
   }
 }
 
-// Counter Updater (Support Server Only)
-async function updateVoiceCounters() {
-  try {
-    const guild = client.guilds.cache.get(process.env.SUPPORT_GUILD_ID);
-    if (!guild) return logger.warn("⚠️ Support server not found");
-
-    const serverCountChannel = await guild.channels.fetch(
-      process.env.SERVER_COUNT_CHANNEL_ID
-    );
-    const userCountChannel = await guild.channels.fetch(
-      process.env.USER_COUNT_CHANNEL_ID
-    );
-
-    if (serverCountChannel) {
-      await serverCountChannel.setName(
-        `📡 Servers: ${client.guilds.cache.size}`
-      );
-    }
-
-    let uniqueUsersCount = 0;
-
-    if (userCountChannel) {
-      // Count unique users across all guilds
-      const uniqueUsers = new Set();
-
-      for (const guild of client.guilds.cache.values()) {
-        guild.members.cache.forEach((member) => uniqueUsers.add(member.id));
-      }
-
-      uniqueUsersCount = uniqueUsers.size;
-      await userCountChannel.setName(`👤 Users: ${uniqueUsersCount}`);
-    }
-
-    // Updated to log the actual uniqueUsersCount we're displaying
-    logger.success(
-      `📈 Updated counters: ${client.guilds.cache.size} servers, ${uniqueUsersCount} users`
-    );
-  } catch (err) {
-    logger.error(`❌ Counters update failed: ${err.message}`);
-  }
-}
-
 // On ready
 client.once("ready", async () => {
   logger.success(`🤖 Logged in as ${client.user.tag}`);
@@ -124,9 +86,12 @@ client.once("ready", async () => {
   await loadReminders(client);
 
   // Update counters immediately on boot
-  await updateVoiceCounters();
+  await updateVoiceCounters(client, getActiveRemindersCount);
 
-  setInterval(updateVoiceCounters, 1000 * 60 * 30);
+  // Update every 30 minutes
+  setInterval(() => {
+    updateVoiceCounters(client, getActiveRemindersCount);
+  }, 1000 * 60 * 30);
 });
 
 // Login
