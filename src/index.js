@@ -27,7 +27,7 @@ const { loadReminders } = require("./utils/reminderStore");
 // Initialize Discord Client
 // -----------------------------------------------------------
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
 });
 
 logger.setDiscordClient(client);
@@ -74,11 +74,7 @@ for (const file of eventFiles) {
 async function updateVoiceCounters() {
   try {
     const guild = client.guilds.cache.get(process.env.SUPPORT_GUILD_ID);
-    if (!guild) {
-      return logger.warn(
-        "⚠️ Support server not found. Skipping counter update."
-      );
-    }
+    if (!guild) return logger.warn("⚠️ Support server not found");
 
     const serverCountChannel = await guild.channels.fetch(
       process.env.SERVER_COUNT_CHANNEL_ID
@@ -88,29 +84,22 @@ async function updateVoiceCounters() {
     );
 
     if (serverCountChannel) {
-      await serverCountChannel.setName(`Servers: ${client.guilds.cache.size}`);
+      await serverCountChannel.setName(
+        `📡 Servers: ${client.guilds.cache.size}`
+      );
     }
 
     if (userCountChannel) {
-      const userIds = new Set();
-
-      for (const guild of client.guilds.cache.values()) {
-        try {
-          const members = await guild.members.fetch();
-          members.forEach((m) => userIds.add(m.user.id));
-        } catch (err) {
-          logger.warn(
-            `⚠️ Failed to fetch members for ${guild.name}: ${err.message}`
-          );
-        }
-      }
-
-      await userCountChannel.setName(`Individual Users: ${userIds.size}`);
+      // Use client's user cache for unique users
+      const uniqueUsers = client.users.cache.size;
+      await userCountChannel.setName(`👤 Individual Users: ${uniqueUsers}`);
     }
 
-    logger.success("📈 Voice channel counters updated successfully.");
+    logger.success(
+      `📈 Updated counters: ${client.guilds.cache.size} servers, ${client.users.cache.size} users`
+    );
   } catch (err) {
-    logger.error(`❌ Failed to update voice counters: ${err.message}`);
+    logger.error(`❌ Counters update failed: ${err.message}`);
   }
 }
 
@@ -128,8 +117,7 @@ client.once("ready", async () => {
   // Update counters immediately on boot
   await updateVoiceCounters();
 
-  // Update every 12 hours
-  setInterval(updateVoiceCounters, 1000 * 60 * 60 * 12);
+  setInterval(updateVoiceCounters, 1000 * 60 * 30);
 });
 
 // Login
