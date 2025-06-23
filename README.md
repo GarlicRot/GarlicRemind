@@ -56,8 +56,8 @@
 | `/remindme view`     | View your active reminders                                  |
 | `/remindme cancel`   | Cancel a specific reminder                                  |
 | `/remindme clear`    | Clear all your reminders                                    |
-| `/remindme pause`    | Pause a reminder without deleting it                        |
-| `/remindme resume`   | Resume a previously paused reminder                         |
+| `/remindme pause`    | Pause a recurring reminder without deleting it                        |
+| `/remindme resume`   | Resume a previously paused recurring reminder                         |
 | `/remindme timezone` | Set your local timezone                                     |
 | `/help`              | Show all supported commands                                 |
 
