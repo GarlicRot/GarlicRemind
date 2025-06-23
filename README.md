@@ -56,11 +56,13 @@
 | `/remindme view`     | View your active reminders                                  |
 | `/remindme cancel`   | Cancel a specific reminder                                  |
 | `/remindme clear`    | Clear all your reminders                                    |
+| `/remindme pause`    | Pause a reminder without deleting it                        |
+| `/remindme resume`   | Resume a previously paused reminder                         |
 | `/remindme timezone` | Set your local timezone                                     |
 | `/help`              | Show all supported commands                                 |
 
 > [!IMPORTANT]
-> You must set your timezone before using `/remindme on`, `/remindme at`, or `/remindme every`..
+> You must set your timezone before using `/remindme on`, `/remindme at`, or `/remindme every`.
 
 ---
 
