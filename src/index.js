@@ -70,6 +70,41 @@ for (const file of eventFiles) {
   }
 }
 
+// Counter Updater (Support Server Only)
+async function updateVoiceCounters() {
+  try {
+    const guild = client.guilds.cache.get(process.env.SUPPORT_GUILD_ID);
+    if (!guild) {
+      return logger.warn(
+        "⚠️ Support server not found. Skipping counter update."
+      );
+    }
+
+    const serverCountChannel = await guild.channels.fetch(
+      process.env.SERVER_COUNT_CHANNEL_ID
+    );
+    const userCountChannel = await guild.channels.fetch(
+      process.env.USER_COUNT_CHANNEL_ID
+    );
+
+    if (serverCountChannel) {
+      await serverCountChannel.setName(`Servers: ${client.guilds.cache.size}`);
+    }
+
+    if (userCountChannel) {
+      const allMembers = await Promise.all(
+        client.guilds.cache.map(async (g) => (await g.members.fetch()).size)
+      );
+      const totalUsers = allMembers.reduce((sum, count) => sum + count, 0);
+      await userCountChannel.setName(`Individual Users: ${totalUsers}`);
+    }
+
+    logger.success("📈 Voice channel counters updated successfully.");
+  } catch (err) {
+    logger.error(`❌ Failed to update voice counters: ${err.message}`);
+  }
+}
+
 // On ready
 client.once("ready", async () => {
   logger.success(`🤖 Logged in as ${client.user.tag}`);
@@ -80,6 +115,12 @@ client.once("ready", async () => {
   });
 
   await loadReminders(client);
+
+  // Update counters immediately on boot
+  await updateVoiceCounters();
+
+  // Update every 12 hours
+  setInterval(updateVoiceCounters, 1000 * 60 * 60 * 12);
 });
 
 // Login
