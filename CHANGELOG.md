@@ -74,6 +74,7 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-06-22
+- `fix: correct import of scheduleReminder in resume command` ([`3e11dac`](https://github.com/GarlicRot/GarlicRemind/commit/3e11daceb8b7e8a7cb73c351f2784ace86c0bb16)) by **GarlicRot**
 - `Merge branch 'main' of https://github.com/GarlicRot/GarlicRemind` ([`0eb2067`](https://github.com/GarlicRot/GarlicRemind/commit/0eb2067f5723b8ca30725fe7f0c78604812c79e8)) by **GarlicRot**
 - `refactor: improve autocomplete error handling for pause and resume subcommands` ([`385fc44`](https://github.com/GarlicRot/GarlicRemind/commit/385fc44cd18c04b80d4ccac1174d3f640787ec22)) by **GarlicRot**
 - `fix(help): add pause and resume subcommands to help command list` ([`af6fd54`](https://github.com/GarlicRot/GarlicRemind/commit/af6fd54addd729672b7289ba95b35da52e682bc4)) by **GarlicRot**
