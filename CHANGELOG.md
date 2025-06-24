@@ -102,6 +102,7 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-06-24
+- `docs(readme): add table of contents and contributing section with links to issues and guide` ([`9db7d05`](https://github.com/GarlicRot/GarlicRemind/commit/9db7d0560bcb2f3ab13fafbf772a079325fee538)) by **GarlicRot**
 - `docs: update verified app badge link to point to official Discord bot listing` ([`3a00387`](https://github.com/GarlicRot/GarlicRemind/commit/3a003871cc45b160c25cc5cd3278d88f0a4b3a23)) by **GarlicRot**
 - `fix: update README compliance links to point to raw .md URLs` ([`a018082`](https://github.com/GarlicRot/GarlicRemind/commit/a01808299e258b1199a5a4c4e96fd2e9bff4ff99)) by **GarlicRot**
 - `docs(readme): update Compliance section with centered verified app badge and improved layout` ([`8fb2303`](https://github.com/GarlicRot/GarlicRemind/commit/8fb2303740a6c2dffd83b781645073fe8934e543)) by **GarlicRot**
