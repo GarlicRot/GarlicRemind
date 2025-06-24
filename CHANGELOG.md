@@ -91,6 +91,7 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-06-23
+- `Merge branch 'main' of https://github.com/GarlicRot/GarlicRemind` ([`9e9664c`](https://github.com/GarlicRot/GarlicRemind/commit/9e9664c52036dbae804632821d3aaeab6b21bcdd)) by **GarlicRot**
 - `docs: update compliance section to reflect Discord bot verification status` ([`1393526`](https://github.com/GarlicRot/GarlicRemind/commit/13935261eead561b9334746c9fff53ae892b1720)) by **GarlicRot**
 - `docs: clarify /pause and /resume descriptions for recurring reminders` ([`b8f3fad`](https://github.com/GarlicRot/GarlicRemind/commit/b8f3fadb7868a15d697e8323313c11aeddcef6d6)) by **GarlicRot**
 - `docs: update README with /remindme pause and resume commands` ([`7c4fed4`](https://github.com/GarlicRot/GarlicRemind/commit/7c4fed425a126f3c1cd471231387ba80bdf8dc4c)) by **GarlicRot**
