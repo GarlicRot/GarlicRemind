@@ -31,7 +31,14 @@ async function updateVoiceCounters(client) {
     const guild = await client.guilds.fetch(SUPPORT_GUILD_ID);
     if (!guild) return;
 
-    const serverCount = client.guilds.cache.size;
+    // Force fetch all guilds to ensure up-to-date count
+    const guilds = await client.guilds.fetch({ force: true });
+    const serverCount = guilds.size;
+
+    // Debug: Log all fetched guild IDs and names
+    const guildList = guilds.map(g => ({ id: g.id, name: g.name }));
+    console.log("[VoiceCounter] Fetched guilds:", guildList);
+
     const reminders = await getReminders();
     const activeRemindersCount = reminders.filter(
       (reminder) => !reminder.paused
@@ -55,6 +62,13 @@ async function updateVoiceCounters(client) {
     );
   } catch (err) {
     console.error(`[VoiceCounter] Failed to update: ${err.message}`);
+    // Fallback to cache if fetch fails, but log the issue
+    const fallbackCount = client.guilds.cache.size;
+    console.warn(`[VoiceCounter] Falling back to cache count: ${fallbackCount} servers`);
+    const serverChannel = await client.channels.fetch(SERVER_COUNT_CHANNEL_ID);
+    if (serverChannel) {
+      await serverChannel.setName(`📡 Servers: ${fallbackCount} (Fallback)`);
+    }
   }
 }
 
