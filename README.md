@@ -77,8 +77,8 @@
   <strong>GarlicRemind</strong> is a verified Discord bot and complies with Discord's policies.
 </p>
 
-- [Terms of Service](https://garlicremind.github.io/terms)  
-- [Privacy Policy](https://garlicremind.github.io/privacy)
+- [Terms of Service](https://garlicrot.github.io/GarlicRemind/terms.md)
+- [Privacy Policy](https://garlicrot.github.io/GarlicRemind/privacy.md)
 
 ---
 
