@@ -69,7 +69,7 @@
 ## Compliance
 
 <p align="center">
-  <a href="https://emoji.gg/emoji/1576-verified-app">
+  <a href="https://discord.com/discovery/applications/1381036586304667820">
     <img src="https://cdn3.emoji.gg/emojis/1576-verified-app.png" height="75" alt="verified_app" />
   </a>
 </p>
