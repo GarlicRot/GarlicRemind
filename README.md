@@ -66,14 +66,19 @@
 
 ---
 
-
 ## Compliance
 
-GarlicRemind is a verified Discord bot and complies with Discord's policies.
+<p align="center">
+  <a href="https://emoji.gg/emoji/1576-verified-app">
+    <img src="https://cdn3.emoji.gg/emojis/1576-verified-app.png" height="75" alt="verified_app" />
+  </a>
+</p>
+<p align="left">
+  <strong>GarlicRemind</strong> is a verified Discord bot and complies with Discord's policies.
+</p>
 
 - [Terms of Service](https://garlicremind.github.io/terms)  
 - [Privacy Policy](https://garlicremind.github.io/privacy)
-
 
 ---
 
