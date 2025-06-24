@@ -26,6 +26,16 @@
 
 ---
 
+## Table of Contents
+
+- [Features](#features)
+- [Commands](#commands)
+- [Compliance](#compliance)
+- [Contributing](#contributing)
+- [About](#about)
+
+---
+
 ## Features
 
 -  **Flexible Reminders** – Use durations (`10m`, `2h`), specific dates (`06-20-2025`), or times (`07:00 PM`)
@@ -79,6 +89,17 @@
 
 - [Terms of Service](https://garlicrot.github.io/GarlicRemind/terms.md)
 - [Privacy Policy](https://garlicrot.github.io/GarlicRemind/privacy.md)
+
+---
+
+## Contributing
+
+We welcome community contributions!
+
+- [Submit Feedback or Issues](https://github.com/GarlicRot/GarlicRemind/issues/new/choose)
+- [Read the Contributing Guide](https://github.com/GarlicRot/GarlicRemind/blob/main/CONTRIBUTING.md)
+
+Help us make GarlicRemind even better!
 
 ---
 
