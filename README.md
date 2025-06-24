@@ -66,12 +66,14 @@
 
 ---
 
+
 ## Compliance
 
-GarlicRemind is currently undergoing Discord bot verification.
+GarlicRemind is a verified Discord bot and complies with Discord's policies.
 
 - [Terms of Service](https://garlicremind.github.io/terms)  
 - [Privacy Policy](https://garlicremind.github.io/privacy)
+
 
 ---
 
