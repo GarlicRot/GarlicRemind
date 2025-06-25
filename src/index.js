@@ -28,7 +28,12 @@ const { updateVoiceCounters } = require("./utils/voiceCounter");
 // Initialize Discord Client
 // -----------------------------------------------------------
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
 });
 
 logger.setDiscordClient(client);
