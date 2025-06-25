@@ -17,7 +17,7 @@
 
 const { EmbedBuilder } = require("discord.js");
 
-const SUPPORT_GUILD_ID = "1381036586304667820";
+const SUPPORT_GUILD_ID = process.env.SUPPORT_GUILD_ID;
 const DEV_ID = "119982148945051651";
 const ALLOWED_CHANNELS = ["1382439964666757192", "1385739675515359353"];
 
@@ -25,17 +25,33 @@ module.exports = {
   name: "messageCreate",
   once: false,
   async execute(message) {
-    // Ignore bot messages
     if (message.author.bot) return;
 
-    // Only allow dev messages
-    if (message.author.id !== DEV_ID) return;
+    console.log("[Relay] Message received:", {
+      authorId: message.author.id,
+      channelId: message.channel.id,
+      guildId: message.guild?.id,
+    });
 
-    // Only run in support server
-    if (message.guild?.id !== SUPPORT_GUILD_ID) return;
+    if (message.author.id !== DEV_ID) {
+      console.log("[Relay] Skipped: Not from dev");
+      return;
+    }
 
-    // Only allow in approved channels
-    if (!ALLOWED_CHANNELS.includes(message.channel.id)) return;
+    if (message.guild?.id !== SUPPORT_GUILD_ID) {
+      console.log("[Relay] Skipped: Not in support server");
+      return;
+    }
+
+    if (!ALLOWED_CHANNELS.includes(message.channel.id)) {
+      console.log("[Relay] Skipped: Not in allowed channel");
+      return;
+    }
+
+    if (!message.content?.trim()) {
+      console.log("[Relay] Skipped: Empty message content");
+      return;
+    }
 
     const embed = new EmbedBuilder()
       .setColor("#5865F2")
@@ -47,13 +63,12 @@ module.exports = {
       .setTimestamp();
 
     try {
+      console.log("[Relay] Sending embed and deleting message...");
       await message.channel.send({ embeds: [embed] });
       await message.delete();
+      console.log("[Relay] Success.");
     } catch (err) {
-      console.error(
-        "[AnnouncementRelay] Failed to repost or delete message:",
-        err
-      );
+      console.error("[Relay] Failed to repost or delete message:", err);
     }
   },
 };
