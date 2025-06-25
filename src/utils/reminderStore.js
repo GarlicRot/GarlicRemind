@@ -214,20 +214,26 @@ async function scheduleSingle(reminder, client) {
 
     try {
       const user = await client.users.fetch(reminder.userId);
-      await user.send({
-        embeds: [
-          buildEmbed({
-            title: "⚠️ Reminder Could Not Be Restored",
-            description: `**Reason:** ${err.message}\n**Message:** ${
-              reminder.message || "*No message*"
-            }\n**Scheduled for:** <t:${Math.floor(
-              reminder.remindAt / 1000
-            )}:f>`,
-            type: "warning",
-            interaction: { user, client },
-          }),
-        ],
-      });
+      try {
+        await user.send({
+          embeds: [
+            buildEmbed({
+              title: "⚠️ Reminder Could Not Be Restored",
+              description: `**Reason:** ${err.message}\n**Message:** ${
+                reminder.message || "*No message*"
+              }\n**Scheduled for:** <t:${Math.floor(
+                reminder.remindAt / 1000
+              )}:f>`,
+              type: "warning",
+              interaction: { user, client },
+            }),
+          ],
+        });
+      } catch (dmErr) {
+        logger.warn(
+          `⚠️ Could not DM user ${reminder.userId} about failed reminder: ${dmErr.message}`
+        );
+      }
     } catch (userErr) {
       logger.warn(
         `⚠️ Could not DM user ${reminder.userId} about failed reminder: ${userErr.message}`
