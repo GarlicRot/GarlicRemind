@@ -102,6 +102,7 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-06-24
+- `refactor(announcement-relay): use env for SUPPORT_GUILD_ID and add debug logs` ([`da5e05a`](https://github.com/GarlicRot/GarlicRemind/commit/da5e05a74d17c1b39e52925770ee09ece9b919ab)) by **GarlicRot**
 - `feat: add announcement relay and enable message content intent` ([`0ca6e93`](https://github.com/GarlicRot/GarlicRemind/commit/0ca6e93c9725750208f7b73aec6310123bbbda82)) by **GarlicRot**
 - `chore: remove debug logs from voice counter logic for cleaner output` ([`2f14395`](https://github.com/GarlicRot/GarlicRemind/commit/2f14395725f0512a28d41b33d6c4aba240feeb1a)) by **GarlicRot**
 - `docs(readme): add table of contents and contributing section with links to issues and guide` ([`9db7d05`](https://github.com/GarlicRot/GarlicRemind/commit/9db7d0560bcb2f3ab13fafbf772a079325fee538)) by **GarlicRot**
