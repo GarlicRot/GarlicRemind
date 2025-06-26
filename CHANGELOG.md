@@ -110,3 +110,8 @@ All notable changes to **GarlicRemind** are documented here.
 - `fix: update README compliance links to point to raw .md URLs` ([`a018082`](https://github.com/GarlicRot/GarlicRemind/commit/a01808299e258b1199a5a4c4e96fd2e9bff4ff99)) by **GarlicRot**
 - `docs(readme): update Compliance section with centered verified app badge and improved layout` ([`8fb2303`](https://github.com/GarlicRot/GarlicRemind/commit/8fb2303740a6c2dffd83b781645073fe8934e543)) by **GarlicRot**
 - `Improve server count accuracy in voiceCounter.js` ([`d94ace6`](https://github.com/GarlicRot/GarlicRemind/commit/d94ace664a6f55b94f044839aab722c16f43fb32)) by **GarlicRot**
+
+---
+
+### 📅 2025-06-26
+- `fix: correct weekday logic for /remindme every to avoid firing on wrong day` ([`2b912ee`](https://github.com/GarlicRot/GarlicRemind/commit/2b912eee92a3e0a2769d5ec3c0666e2486607ed3)) by **GarlicRot**
