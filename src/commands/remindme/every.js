@@ -113,8 +113,30 @@ module.exports = {
       millisecond: 0,
     });
 
-    if (target <= now) {
-      target = target.plus({ days: 1 });
+    if (["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].includes(interval)) {
+      const weekdays = {
+        monday: 1,
+        tuesday: 2,
+        wednesday: 3,
+        thursday: 4,
+        friday: 5,
+        saturday: 6,
+        sunday: 7,
+      };
+
+      const targetWeekday = weekdays[interval];
+      const todayWeekday = now.weekday;
+
+      let daysToAdd = (targetWeekday - todayWeekday + 7) % 7;
+      if (daysToAdd === 0 && target <= now) {
+        daysToAdd = 7;
+      }
+
+      target = target.plus({ days: daysToAdd });
+    } else {
+      if (target <= now) {
+        target = target.plus({ days: 1 });
+      }
     }
 
     const id = crypto.randomUUID();
