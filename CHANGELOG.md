@@ -114,4 +114,5 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-06-26
+- `chore: remove debug logs from announcement relay event` ([`2c88473`](https://github.com/GarlicRot/GarlicRemind/commit/2c884738885ebd177cf7c89a1332d0e3a459ec30)) by **GarlicRot**
 - `fix: correct weekday logic for /remindme every to avoid firing on wrong day` ([`2b912ee`](https://github.com/GarlicRot/GarlicRemind/commit/2b912eee92a3e0a2769d5ec3c0666e2486607ed3)) by **GarlicRot**
