@@ -26,32 +26,10 @@ module.exports = {
   once: false,
   async execute(message) {
     if (message.author.bot) return;
-
-    console.log("[Relay] Message received:", {
-      authorId: message.author.id,
-      channelId: message.channel.id,
-      guildId: message.guild?.id,
-    });
-
-    if (message.author.id !== DEV_ID) {
-      console.log("[Relay] Skipped: Not from dev");
-      return;
-    }
-
-    if (message.guild?.id !== SUPPORT_GUILD_ID) {
-      console.log("[Relay] Skipped: Not in support server");
-      return;
-    }
-
-    if (!ALLOWED_CHANNELS.includes(message.channel.id)) {
-      console.log("[Relay] Skipped: Not in allowed channel");
-      return;
-    }
-
-    if (!message.content?.trim()) {
-      console.log("[Relay] Skipped: Empty message content");
-      return;
-    }
+    if (message.author.id !== DEV_ID) return;
+    if (message.guild?.id !== SUPPORT_GUILD_ID) return;
+    if (!ALLOWED_CHANNELS.includes(message.channel.id)) return;
+    if (!message.content?.trim()) return;
 
     const embed = new EmbedBuilder()
       .setColor("#5865F2")
@@ -63,12 +41,10 @@ module.exports = {
       .setTimestamp();
 
     try {
-      console.log("[Relay] Sending embed and deleting message...");
       await message.channel.send({ embeds: [embed] });
       await message.delete();
-      console.log("[Relay] Success.");
     } catch (err) {
-      console.error("[Relay] Failed to repost or delete message:", err);
+      console.error("[AnnouncementRelay] Failed to repost or delete message:", err);
     }
   },
 };
