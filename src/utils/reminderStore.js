@@ -34,7 +34,6 @@ async function loadReminders(client) {
     logger.info(`🔁 Loaded ${reminders.length} reminder(s) from Firestore.`);
 
     for (const reminder of reminders) {
-      // ⏸️ Skip paused reminders
       if (reminder.paused) {
         logger.info(`⏸️ Skipping paused reminder: ${reminder.id}`);
         continue;
@@ -95,7 +94,7 @@ async function loadReminders(client) {
 
 async function scheduleReminder(reminder, client) {
   reminder.id = reminder.id || uuidv4();
-  if (reminder.paused === undefined) reminder.paused = false; // Default if not set
+  if (reminder.paused === undefined) reminder.paused = false;
 
   await db
     .collection("discord")
@@ -160,32 +159,44 @@ async function scheduleSingle(reminder, client) {
           `🔔 Reminder sent to ${userTag} in ${reminder.channelId} (ID: ${reminder.id})`
         );
 
-        // 🔁 Reschedule if recurring and not paused
         if (reminder.recurring && reminder.repeatMeta?.type) {
           const now = DateTime.fromMillis(reminder.remindAt);
           let next;
 
+          const weekdays = {
+            monday: 1,
+            tuesday: 2,
+            wednesday: 3,
+            thursday: 4,
+            friday: 5,
+            saturday: 6,
+            sunday: 7,
+          };
+
           switch (reminder.repeatMeta.type) {
-            case "daily":
+            case "hour":
+              next = now.plus({ hours: 1 });
+              break;
+            case "day":
               next = now.plus({ days: 1 });
               break;
-            case "weekly":
+            case "week":
               next = now.plus({ weeks: 1 });
               break;
-            case "monthly":
+            case "month":
               next = now.plus({ months: 1 });
-              break;
-            case "weekdays":
-              let offset = 1;
-              do {
-                next = now.plus({ days: offset++ });
-              } while (next.weekday > 5);
+              if (reminder.repeatMeta.userDayOfMonth) {
+                next = next.set({ day: reminder.repeatMeta.userDayOfMonth });
+                if (next < now) next = next.plus({ months: 1 });
+              }
               break;
             default:
-              logger.warn(
-                `⚠️ Unknown repeat type: ${reminder.repeatMeta.type}`
-              );
-              next = null;
+              if (weekdays[reminder.repeatMeta.type]) {
+                const targetWeekday = weekdays[reminder.repeatMeta.type];
+                let daysToAdd = (targetWeekday - now.weekday + 7) % 7;
+                if (daysToAdd === 0) daysToAdd = 7;
+                next = now.plus({ days: daysToAdd });
+              }
           }
 
           if (next) {
@@ -207,36 +218,28 @@ async function scheduleSingle(reminder, client) {
     activeTimeouts[reminder.id] = timeout;
   } catch (err) {
     const userTag = await logger.getUsername(client, reminder.userId);
-
     logger.warn(
       `⚠️ Could not schedule reminder (ID: ${reminder.id}) for ${userTag}: ${err.message}`
     );
-
     try {
       const user = await client.users.fetch(reminder.userId);
-      try {
-        await user.send({
-          embeds: [
-            buildEmbed({
-              title: "⚠️ Reminder Could Not Be Restored",
-              description: `**Reason:** ${err.message}\n**Message:** ${
-                reminder.message || "*No message*"
-              }\n**Scheduled for:** <t:${Math.floor(
-                reminder.remindAt / 1000
-              )}:f>`,
-              type: "warning",
-              interaction: { user, client },
-            }),
-          ],
-        });
-      } catch (dmErr) {
-        logger.warn(
-          `⚠️ Could not DM user ${reminder.userId} about failed reminder: ${dmErr.message}`
-        );
-      }
-    } catch (userErr) {
+      await user.send({
+        embeds: [
+          buildEmbed({
+            title: "⚠️ Reminder Could Not Be Restored",
+            description: `**Reason:** ${err.message}\n**Message:** ${
+              reminder.message || "*No message*"
+            }\n**Scheduled for:** <t:${Math.floor(
+              reminder.remindAt / 1000
+            )}:f>`,
+            type: "warning",
+            interaction: { user, client },
+          }),
+        ],
+      });
+    } catch (dmErr) {
       logger.warn(
-        `⚠️ Could not DM user ${reminder.userId} about failed reminder: ${userErr.message}`
+        `⚠️ Could not DM user ${reminder.userId} about failed reminder: ${dmErr.message}`
       );
     }
   }

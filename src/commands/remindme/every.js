@@ -90,6 +90,21 @@ module.exports = {
       });
     }
 
+    if (!timeStr) {
+      return interaction.reply({
+        embeds: [
+          buildEmbed({
+            title: "❌ Invalid Time Format",
+            description:
+              "A time (e.g., `2:00 PM`) is required for all intervals.",
+            type: "error",
+            interaction,
+          }),
+        ],
+        flags: 64,
+      });
+    }
+
     const timeParsed = parseTime(timeStr);
     if (!timeParsed) {
       return interaction.reply({
@@ -106,43 +121,42 @@ module.exports = {
     }
 
     const now = DateTime.now().setZone(timezone);
-    let target = now.set({
-      hour: timeParsed.hour,
-      minute: timeParsed.minute,
-      second: 0,
-      millisecond: 0,
-    });
+    let target = now.set({ second: 0, millisecond: 0 });
 
-    if (["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].includes(interval)) {
-      const weekdays = {
-        monday: 1,
-        tuesday: 2,
-        wednesday: 3,
-        thursday: 4,
-        friday: 5,
-        saturday: 6,
-        sunday: 7,
-      };
+    target = target.set({ hour: timeParsed.hour, minute: timeParsed.minute });
 
+    const weekdays = {
+      monday: 1,
+      tuesday: 2,
+      wednesday: 3,
+      thursday: 4,
+      friday: 5,
+      saturday: 6,
+      sunday: 7,
+    };
+
+    if (weekdays[interval]) {
       const targetWeekday = weekdays[interval];
       const todayWeekday = now.weekday;
-
       let daysToAdd = (targetWeekday - todayWeekday + 7) % 7;
-      if (daysToAdd === 0 && target <= now) {
-        daysToAdd = 7;
-      }
-
+      if (daysToAdd === 0 && target <= now) daysToAdd = 7;
       target = target.plus({ days: daysToAdd });
     } else {
+      const increments = {
+        hour: { hours: 1 },
+        day: { days: 1 },
+        week: { weeks: 1 },
+        month: { months: 1 },
+      };
       if (target <= now) {
-        target = target.plus({ days: 1 });
+        target = target.plus(increments[interval] || { days: 1 });
       }
     }
 
     const id = crypto.randomUUID();
     const repeatMeta = { type: interval };
 
-    if (interval === "monthly") {
+    if (interval === "month") {
       repeatMeta.userDayOfMonth = now.day;
     }
 
