@@ -82,58 +82,7 @@ async function loadReminders(client) {
         continue;
       }
 
-      const timeLeft = reminder.remindAt - Date.now();
-      const userTag = await logger.getUsername(client, reminder.userId);
-
-      if (timeLeft <= 0) {
-        logger.warn(
-          `⏰ Overdue reminder for ${userTag} (ID: ${
-            reminder.id
-          }) overdue by ${Math.abs(timeLeft)}ms`
-        );
-
-        try {
-          const channel = await client.channels.fetch(reminder.channelId);
-          const user = await client.users.fetch(reminder.userId);
-
-          const embed = buildEmbed({
-            title: "⏰ Reminder!",
-            description: `**Message:** ${
-              reminder.message || "*No message provided*"
-            }`,
-            type: "notify",
-            interaction: {
-              user,
-              client,
-              guildId: channel.guildId,
-              channelId: channel.id,
-              id: reminder.messageId || reminder.id,
-              createdTimestamp: Date.now(),
-            },
-          });
-
-          await channel.send({
-            content: `<@${reminder.userId}>`,
-            embeds: [embed],
-          });
-
-          logger.success(
-            `✅ Sent overdue reminder (ID: ${reminder.id}) for ${userTag}`
-          );
-
-          if (!reminder.recurring) {
-            await removeReminder(reminder.id);
-          } else {
-            scheduleSingle(reminder, client);
-          }
-        } catch (err) {
-          logger.error(
-            `❌ Failed to send overdue reminder (ID: ${reminder.id}): ${err.message}`
-          );
-        }
-      } else {
-        scheduleSingle(reminder, client);
-      }
+      scheduleSingle(reminder, client);
     }
   } catch (err) {
     logger.error(`❌ Failed to load reminders from Firestore: ${err.message}`);
