@@ -134,6 +134,7 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-07-03
+- `- Removed debug logs` ([`85b5523`](https://github.com/GarlicRot/GarlicRemind/commit/85b55234d26d5d5f1ef4744d41ec908977c4581c)) by **GarlicRot**
 - `- Removed debug logs` ([`9d52fc8`](https://github.com/GarlicRot/GarlicRemind/commit/9d52fc8c147f17d6907a0f2d0a3dd9c7f025a618)) by **GarlicRot**
 - `fix: correct logger import path and enhance guild fetching` ([`73d68cd`](https://github.com/GarlicRot/GarlicRemind/commit/73d68cd2ff7ea37a10aefebe8d1b7e8d13f9f5b1)) by **GarlicRot**
 - `fix: resolve logger undefined error and improve guild fetching` ([`61eaf9b`](https://github.com/GarlicRot/GarlicRemind/commit/61eaf9b78d7691f693e8d0c7f35adb28680e7154)) by **GarlicRot**
