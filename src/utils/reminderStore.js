@@ -22,6 +22,49 @@ const { DateTime } = require("luxon");
 
 const activeTimeouts = {};
 
+function calculateNextOccurrence(reminder) {
+  const now = DateTime.fromMillis(reminder.remindAt);
+  let next;
+
+  const weekdays = {
+    monday: 1,
+    tuesday: 2,
+    wednesday: 3,
+    thursday: 4,
+    friday: 5,
+    saturday: 6,
+    sunday: 7,
+  };
+
+  switch (reminder.repeatMeta.type) {
+    case "hour":
+      next = now.plus({ hours: 1 });
+      break;
+    case "day":
+      next = now.plus({ days: 1 });
+      break;
+    case "week":
+      next = now.plus({ weeks: 1 });
+      break;
+    case "month":
+      next = now.plus({ months: 1 });
+      if (reminder.repeatMeta.userDayOfMonth) {
+        next = next.set({ day: reminder.repeatMeta.userDayOfMonth });
+        if (next < now) next = next.plus({ months: 1 });
+      }
+      break;
+    default:
+      if (weekdays[reminder.repeatMeta.type]) {
+        const targetWeekday = weekdays[reminder.repeatMeta.type];
+        let daysToAdd = (targetWeekday - now.weekday + 7) % 7;
+        if (daysToAdd === 0) daysToAdd = 7;
+        next = now.plus({ days: daysToAdd });
+      }
+  }
+
+  return next;
+}
+
 async function loadReminders(client) {
   try {
     const snapshot = await db
