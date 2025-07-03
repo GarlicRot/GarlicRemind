@@ -125,5 +125,6 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-07-02
+- `Fix recurring reminder scheduling error` ([`729c7c5`](https://github.com/GarlicRot/GarlicRemind/commit/729c7c5710c03d4a721e1a87596fd3a8a60decde)) by **GarlicRot**
 - `Merge branch 'main' of https://github.com/GarlicRot/GarlicRemind` ([`6698c7a`](https://github.com/GarlicRot/GarlicRemind/commit/6698c7ab078e80654e9fbb13405d242e707af79c)) by **GarlicRot**
 - `Fix recurring reminders being deleted after first trigger` ([`b5abecf`](https://github.com/GarlicRot/GarlicRemind/commit/b5abecf361edc23e77e883b9e8fec82020f50ef3)) by **GarlicRot**
