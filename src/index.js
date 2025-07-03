@@ -92,11 +92,6 @@ client.once("ready", async () => {
 
   // Ensure guild cache is populated before updating counters
   await client.guilds.fetch(); // Force fetch all guilds
-  logger.info(
-    `[VoiceCounter] Fetched ${
-      client.guilds.cache.size
-    } guilds: ${client.guilds.cache.map((g) => g.id).join(", ")}`
-  );
 
   // Initial counter update with retry
   const maxRetries = 3;
