@@ -121,3 +121,8 @@ All notable changes to **GarlicRemind** are documented here.
 
 ### 📅 2025-06-27
 - `fix: resolve reminder deletion issue and enforce time for /remindme every` ([`b2f54b3`](https://github.com/GarlicRot/GarlicRemind/commit/b2f54b3b24d76b332b2c31145c52439c09a45ce6)) by **GarlicRot**
+
+---
+
+### 📅 2025-07-02
+- `Fix recurring reminders being deleted after first trigger` ([`b5abecf`](https://github.com/GarlicRot/GarlicRemind/commit/b5abecf361edc23e77e883b9e8fec82020f50ef3)) by **GarlicRot**
