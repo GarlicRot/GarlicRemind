@@ -17,7 +17,7 @@
  */
 
 const { getReminders } = require("./reminderStore");
-const logger = require("./utils/logger"); // Explicitly import logger
+const logger = require("../utils/logger");
 
 const SUPPORT_GUILD_ID = process.env.SUPPORT_GUILD_ID;
 const SERVER_COUNT_CHANNEL_ID = process.env.SERVER_COUNT_CHANNEL_ID;
@@ -42,12 +42,12 @@ async function updateVoiceCounters(client) {
       return;
     }
 
-    // Force fetch all guilds with retry
+    // Force fetch all guilds with retry and detailed logging
     let guilds;
     const maxFetchRetries = 3;
     for (let attempt = 1; attempt <= maxFetchRetries; attempt++) {
       try {
-        guilds = await client.guilds.fetch();
+        guilds = await client.guilds.fetch({ cache: true, force: true });
         break;
       } catch (fetchErr) {
         log.warn(
@@ -59,7 +59,9 @@ async function updateVoiceCounters(client) {
     }
     const serverCount = guilds.size;
     log.info(
-      `[VoiceCounter] Fetched ${serverCount} guilds: ${guilds
+      `[VoiceCounter] Fetched ${serverCount} guilds: ${Array.from(
+        guilds.values()
+      )
         .map((g) => g.id)
         .join(", ")}`
     );
