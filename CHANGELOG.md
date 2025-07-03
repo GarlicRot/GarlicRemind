@@ -125,6 +125,7 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-07-02
+- `fix: remove overdue reminder logic due to 24/7 uptime` ([`d7f1c40`](https://github.com/GarlicRot/GarlicRemind/commit/d7f1c40cf745701ea63ee4d9134cca5b045f3af8)) by **GarlicRot**
 - `fix: add autocomplete to cancel command` ([`2072417`](https://github.com/GarlicRot/GarlicRemind/commit/2072417a635f28e3ed6e0d02d8c0c51cf484ece9)) by **GarlicRot**
 - `Fix recurring reminder scheduling error` ([`729c7c5`](https://github.com/GarlicRot/GarlicRemind/commit/729c7c5710c03d4a721e1a87596fd3a8a60decde)) by **GarlicRot**
 - `Merge branch 'main' of https://github.com/GarlicRot/GarlicRemind` ([`6698c7a`](https://github.com/GarlicRot/GarlicRemind/commit/6698c7ab078e80654e9fbb13405d242e707af79c)) by **GarlicRot**
