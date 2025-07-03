@@ -17,6 +17,7 @@
  */
 
 const { getReminders } = require("./reminderStore");
+const logger = require("./utils/logger"); // Explicitly import logger
 
 const SUPPORT_GUILD_ID = process.env.SUPPORT_GUILD_ID;
 const SERVER_COUNT_CHANNEL_ID = process.env.SERVER_COUNT_CHANNEL_ID;
@@ -27,19 +28,41 @@ const ACTIVE_REMINDERS_CHANNEL_ID = process.env.ACTIVE_REMINDERS_CHANNEL_ID;
  * @param {import('discord.js').Client} client
  */
 async function updateVoiceCounters(client) {
+  const log = logger || console; // Fallback to console if logger is undefined
   try {
     const guild =
       client.guilds.cache.get(SUPPORT_GUILD_ID) ||
-      (await client.guilds.fetch(SUPPORT_GUILD_ID).catch(() => null));
+      (await client.guilds.fetch(SUPPORT_GUILD_ID).catch((err) => {
+        log.warn(`[VoiceCounter] Support guild fetch failed: ${err.message}`);
+        return null;
+      }));
 
     if (!guild) {
-      logger.warn("[VoiceCounter] Support guild not found");
+      log.warn("[VoiceCounter] Support guild not found");
       return;
     }
 
-    // Use cached size after initial fetch
-    const serverCount = client.guilds.cache.size;
-    logger.debug(`[VoiceCounter] Using server count: ${serverCount}`);
+    // Force fetch all guilds with retry
+    let guilds;
+    const maxFetchRetries = 3;
+    for (let attempt = 1; attempt <= maxFetchRetries; attempt++) {
+      try {
+        guilds = await client.guilds.fetch();
+        break;
+      } catch (fetchErr) {
+        log.warn(
+          `[VoiceCounter] Guild fetch failed on attempt ${attempt}: ${fetchErr.message}`
+        );
+        if (attempt === maxFetchRetries) throw fetchErr;
+        await new Promise((resolve) => setTimeout(resolve, 2000 * attempt));
+      }
+    }
+    const serverCount = guilds.size;
+    log.info(
+      `[VoiceCounter] Fetched ${serverCount} guilds: ${guilds
+        .map((g) => g.id)
+        .join(", ")}`
+    );
 
     const reminders = await getReminders();
     const activeRemindersCount = reminders.filter((r) => !r.paused).length;
@@ -52,7 +75,7 @@ async function updateVoiceCounters(client) {
         await serverChannel.setName(`📡 Servers: ${serverCount}`);
       }
     } catch (serverErr) {
-      logger.error(
+      log.error(
         `[VoiceCounter] Server count update failed: ${serverErr.message}`
       );
     }
@@ -65,12 +88,12 @@ async function updateVoiceCounters(client) {
         await remindersChannel.setName(`⏰ Reminders: ${activeRemindersCount}`);
       }
     } catch (reminderErr) {
-      logger.error(
+      log.error(
         `[VoiceCounter] Reminder count update failed: ${reminderErr.message}`
       );
     }
   } catch (err) {
-    logger.error(`[VoiceCounter] Main update failed: ${err.message}`);
+    log.error(`[VoiceCounter] Main update failed: ${err.message}`);
   }
 }
 

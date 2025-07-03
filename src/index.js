@@ -20,7 +20,9 @@ const fs = require("fs");
 const path = require("path");
 const { Client, Collection, GatewayIntentBits } = require("discord.js");
 
-const logger = require("./utils/logger");
+const logger = require("./utils/logger"); // Require logger first
+logger.setDiscordClient(null); // Initialize with null to avoid undefined issues
+
 const { loadReminders } = require("./utils/reminderStore");
 const { updateVoiceCounters } = require("./utils/voiceCounter");
 
@@ -36,7 +38,7 @@ const client = new Client({
   ],
 });
 
-logger.setDiscordClient(client);
+logger.setDiscordClient(client); // Set client after initialization
 
 client.commands = new Collection();
 const loadedCommands = [];
