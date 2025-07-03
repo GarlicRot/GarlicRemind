@@ -50,21 +50,11 @@ async function updateVoiceCounters(client) {
         guilds = await client.guilds.fetch({ cache: true, force: true });
         break;
       } catch (fetchErr) {
-        log.warn(
-          `[VoiceCounter] Guild fetch failed on attempt ${attempt}: ${fetchErr.message}`
-        );
         if (attempt === maxFetchRetries) throw fetchErr;
         await new Promise((resolve) => setTimeout(resolve, 2000 * attempt));
       }
     }
     const serverCount = guilds.size;
-    log.info(
-      `[VoiceCounter] Fetched ${serverCount} guilds: ${Array.from(
-        guilds.values()
-      )
-        .map((g) => g.id)
-        .join(", ")}`
-    );
 
     const reminders = await getReminders();
     const activeRemindersCount = reminders.filter((r) => !r.paused).length;
