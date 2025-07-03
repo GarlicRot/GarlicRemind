@@ -85,14 +85,45 @@ client.once("ready", async () => {
     status: "online",
   });
 
+  // Load reminders
   await loadReminders(client);
 
-  // Update counters immediately on boot
-  await updateVoiceCounters(client);
+  // Ensure guild cache is populated before updating counters
+  await client.guilds.fetch(); // Force fetch all guilds
+  logger.info(
+    `[VoiceCounter] Fetched ${
+      client.guilds.cache.size
+    } guilds: ${client.guilds.cache.map((g) => g.id).join(", ")}`
+  );
+
+  // Initial counter update with retry
+  const maxRetries = 3;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await updateVoiceCounters(client);
+      logger.info(
+        `[VoiceCounter] Successfully updated counters on attempt ${attempt}`
+      );
+      break;
+    } catch (err) {
+      logger.warn(
+        `[VoiceCounter] Counter update failed on attempt ${attempt}: ${err.message}`
+      );
+      if (attempt === maxRetries) {
+        logger.error(
+          `[VoiceCounter] Failed to update counters after ${maxRetries} attempts`
+        );
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 2000 * attempt)); // Exponential backoff
+      }
+    }
+  }
 
   // Update every 30 minutes
   setInterval(() => {
-    updateVoiceCounters(client);
+    updateVoiceCounters(client).catch((err) =>
+      logger.error(`[VoiceCounter] Interval update failed: ${err.message}`)
+    );
   }, 1000 * 60 * 30);
 });
 
