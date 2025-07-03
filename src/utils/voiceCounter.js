@@ -28,41 +28,67 @@ const ACTIVE_REMINDERS_CHANNEL_ID = process.env.ACTIVE_REMINDERS_CHANNEL_ID;
  */
 async function updateVoiceCounters(client) {
   try {
-    const guild = await client.guilds.fetch(SUPPORT_GUILD_ID);
-    if (!guild) return;
+    // Fetch support guild using cache first
+    const guild =
+      client.guilds.cache.get(SUPPORT_GUILD_ID) ||
+      (await client.guilds.fetch(SUPPORT_GUILD_ID).catch(() => null));
 
-    const guilds = await client.guilds.fetch({ force: true });
-    const serverCount = guilds.size;
-
-    const reminders = await getReminders();
-    const activeRemindersCount = reminders.filter(
-      (reminder) => !reminder.paused
-    ).length;
-
-    const serverChannel = await client.channels.fetch(SERVER_COUNT_CHANNEL_ID);
-    const remindersChannel = await client.channels.fetch(
-      ACTIVE_REMINDERS_CHANNEL_ID
-    );
-
-    if (serverChannel) {
-      await serverChannel.setName(`📡 Servers: ${serverCount}`);
+    if (!guild) {
+      console.warn("[VoiceCounter] Support guild not found");
+      return;
     }
 
-    if (remindersChannel) {
-      await remindersChannel.setName(`⏰ Reminders: ${activeRemindersCount}`);
+    // Get server count from cache
+    const serverCount = client.guilds.cache.size;
+
+    // Get active reminders count
+    const reminders = await getReminders();
+    const activeRemindersCount = reminders.filter((r) => !r.paused).length;
+
+    // Update channels with individual error handling
+    try {
+      const serverChannel = await client.channels.fetch(
+        SERVER_COUNT_CHANNEL_ID
+      );
+      if (serverChannel) {
+        await serverChannel.setName(`📡 Servers: ${serverCount}`);
+      }
+    } catch (serverErr) {
+      console.error(
+        `[VoiceCounter] Server count update failed: ${serverErr.message}`
+      );
+    }
+
+    try {
+      const remindersChannel = await client.channels.fetch(
+        ACTIVE_REMINDERS_CHANNEL_ID
+      );
+      if (remindersChannel) {
+        await remindersChannel.setName(`⏰ Reminders: ${activeRemindersCount}`);
+      }
+    } catch (reminderErr) {
+      console.error(
+        `[VoiceCounter] Reminder count update failed: ${reminderErr.message}`
+      );
     }
   } catch (err) {
-    console.error(`[VoiceCounter] Failed to update: ${err.message}`);
+    console.error(`[VoiceCounter] Main update failed: ${err.message}`);
 
-    // Fallback to cache if fetch fails
+    // Fallback to cached server count
     const fallbackCount = client.guilds.cache.size;
-    console.warn(
-      `[VoiceCounter] Falling back to cache count: ${fallbackCount} servers`
-    );
+    console.warn(`[VoiceCounter] Using cache count: ${fallbackCount} servers`);
 
-    const serverChannel = await client.channels.fetch(SERVER_COUNT_CHANNEL_ID);
-    if (serverChannel) {
-      await serverChannel.setName(`📡 Servers: ${fallbackCount} (Fallback)`);
+    try {
+      const serverChannel = await client.channels.fetch(
+        SERVER_COUNT_CHANNEL_ID
+      );
+      if (serverChannel) {
+        await serverChannel.setName(`📡 Servers: ${fallbackCount} (Fallback)`);
+      }
+    } catch (fallbackErr) {
+      console.error(
+        `[VoiceCounter] Fallback update failed: ${fallbackErr.message}`
+      );
     }
   }
 }
