@@ -134,4 +134,5 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-07-03
+- `fix: resolve logger undefined error and improve guild fetching` ([`61eaf9b`](https://github.com/GarlicRot/GarlicRemind/commit/61eaf9b78d7691f693e8d0c7f35adb28680e7154)) by **GarlicRot**
 - `fix: ensure accurate server count on bot startup` ([`15631d2`](https://github.com/GarlicRot/GarlicRemind/commit/15631d2f76c9c1e5d357187d04f073292b5d436a)) by **GarlicRot**
