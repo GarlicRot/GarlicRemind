@@ -39,7 +39,7 @@ function buildEmbed({
   description,
   type = "info",
   interaction,
-  footer = "SmokeLog Reminder",
+  footer = "GarlicRemind",
 }) {
   const embed = new EmbedBuilder()
     .setTitle(title)
