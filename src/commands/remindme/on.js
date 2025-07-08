@@ -126,6 +126,21 @@ module.exports = {
       });
     }
 
+    if (!dateStr || !/^\d{2}-\d{2}-\d{4}$/.test(dateStr)) {
+      logger.warn(`Invalid date string provided: "${dateStr}" by ${userId}`);
+      return interaction.reply({
+        embeds: [
+          buildEmbed({
+            title: "❌ Invalid Date Format",
+            description: "Use the format `MM-DD-YYYY` (e.g., `07-09-2025`).",
+            type: "error",
+            interaction,
+          }),
+        ],
+        flags: 64,
+      });
+    }
+
     const [month, day, year] = dateStr.split("-").map(Number);
     const dt = DateTime.fromObject(
       { year, month, day, hour: parsed.hour, minute: parsed.minute },
