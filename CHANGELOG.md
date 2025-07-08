@@ -144,3 +144,8 @@ All notable changes to **GarlicRemind** are documented here.
 
 ### 📅 2025-07-07
 - `fix(embedBuilder): update default footer text to GarlicRemind` ([`a3960e2`](https://github.com/GarlicRot/GarlicRemind/commit/a3960e2f6d0eeb68a37af0e40d83060353732763)) by **GarlicRot**
+
+---
+
+### 📅 2025-07-08
+- `fix(remindme on): validate date format and prevent NaN parsing` ([`892ec11`](https://github.com/GarlicRot/GarlicRemind/commit/892ec1156ba3d5cc7621e45b4f3e14773d64ea56)) by **GarlicRot**
