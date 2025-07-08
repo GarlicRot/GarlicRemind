@@ -146,37 +146,45 @@ async function scheduleSingle(reminder, client) {
           },
         });
 
-        await channel.send({
-          content: `<@${reminder.userId}>`,
-          embeds: [embed],
-        });
+        try {
+          await channel.send({
+            content: `<@${reminder.userId}>`,
+            embeds: [embed],
+          });
 
-        const userTag = await logger.getUsername(client, reminder.userId);
-        logger.success(
-          `🔔 Reminder sent to ${userTag} in ${reminder.channelId} (ID: ${reminder.id})`
-        );
+          const userTag = await logger.getUsername(client, reminder.userId);
+          logger.success(
+            `🔔 Reminder sent to ${userTag} in ${reminder.channelId} (ID: ${reminder.id})`
+          );
 
-        // Handle recurring reminders
-        if (reminder.recurring && reminder.repeatMeta?.type) {
-          const next = calculateNextOccurrence(reminder);
-
-          if (next) {
-            // Update and reschedule recurring reminder
-            reminder.remindAt = next.toMillis();
-            await scheduleReminder(reminder, client);
-            logger.info(
-              `⏩ Rescheduled recurring reminder (ID: ${reminder.id})`
-            );
+          if (reminder.recurring && reminder.repeatMeta?.type) {
+            const next = calculateNextOccurrence(reminder);
+            if (next) {
+              reminder.remindAt = next.toMillis();
+              await scheduleReminder(reminder, client);
+              logger.info(
+                `⏩ Rescheduled recurring reminder (ID: ${reminder.id})`
+              );
+            } else {
+              await removeReminder(reminder.id);
+            }
           } else {
             await removeReminder(reminder.id);
           }
-        } else {
-          // Remove non-recurring reminders
-          await removeReminder(reminder.id);
+        } catch (sendErr) {
+          if (sendErr.code === 50007) {
+            logger.error(
+              `❌ Failed to send reminder (ID: ${reminder.id}): Cannot send messages to user ${reminder.userId} – DMs may be disabled or bot blocked.`
+            );
+          } else {
+            logger.error(
+              `❌ Failed to send reminder (ID: ${reminder.id}): ${sendErr.message}`
+            );
+          }
         }
-      } catch (sendErr) {
+      } catch (userErr) {
         logger.error(
-          `❌ Failed to send reminder (ID: ${reminder.id}): ${sendErr.message}`
+          `❌ Failed to fetch user or send reminder (ID: ${reminder.id}): ${userErr.message}`
         );
       }
     }, delay);
