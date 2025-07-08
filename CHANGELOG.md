@@ -139,3 +139,8 @@ All notable changes to **GarlicRemind** are documented here.
 - `fix: correct logger import path and enhance guild fetching` ([`73d68cd`](https://github.com/GarlicRot/GarlicRemind/commit/73d68cd2ff7ea37a10aefebe8d1b7e8d13f9f5b1)) by **GarlicRot**
 - `fix: resolve logger undefined error and improve guild fetching` ([`61eaf9b`](https://github.com/GarlicRot/GarlicRemind/commit/61eaf9b78d7691f693e8d0c7f35adb28680e7154)) by **GarlicRot**
 - `fix: ensure accurate server count on bot startup` ([`15631d2`](https://github.com/GarlicRot/GarlicRemind/commit/15631d2f76c9c1e5d357187d04f073292b5d436a)) by **GarlicRot**
+
+---
+
+### 📅 2025-07-07
+- `fix(embedBuilder): update default footer text to GarlicRemind` ([`a3960e2`](https://github.com/GarlicRot/GarlicRemind/commit/a3960e2f6d0eeb68a37af0e40d83060353732763)) by **GarlicRot**
