@@ -81,7 +81,8 @@ module.exports = {
         embeds: [
           buildEmbed({
             title: "🌍 Timezone Not Set",
-            description: "Use `/remindme timezone` to set your timezone.",
+            description:
+              "A timezone is required to set recurring reminders. Please set your timezone using `/remindme timezone` (e.g., `/remindme timezone America/New_York`).",
             type: "warning",
             interaction,
           }),
@@ -94,9 +95,9 @@ module.exports = {
       return interaction.reply({
         embeds: [
           buildEmbed({
-            title: "❌ Invalid Time Format",
+            title: "❌ Missing Time",
             description:
-              "A time (e.g., `2:00 PM`) is required for all intervals.",
+              "A time is required for recurring reminders. Please provide a time in the 12-hour format with AM/PM, such as '2:00 PM' or '9:30 AM'.",
             type: "error",
             interaction,
           }),
@@ -111,7 +112,7 @@ module.exports = {
         embeds: [
           buildEmbed({
             title: "❌ Invalid Time Format",
-            description: "Use a time like `2:00 PM`.",
+            description: `The time you provided, '${timeStr}', is invalid. Please use the 12-hour format with AM/PM, such as '2:00 PM' or '9:30 AM'. Ensure hours are between 1 and 12, and minutes are between 00 and 59.`,
             type: "error",
             interaction,
           }),
