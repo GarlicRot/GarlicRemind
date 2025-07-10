@@ -94,7 +94,7 @@ module.exports = {
         embeds: [
           buildEmbed({
             title: "❌ Invalid Duration",
-            description: "Minimum is 10 seconds.",
+            description: `The duration you provided, '${duration}', is invalid or too short. Please use a duration of at least 10 seconds, such as '10s', '5m', '2h', or '1d'.`,
             type: "error",
             interaction,
           }),
