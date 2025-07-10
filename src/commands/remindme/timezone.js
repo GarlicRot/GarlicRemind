@@ -32,7 +32,7 @@ module.exports = {
         embeds: [
           buildEmbed({
             title: "❌ Invalid Timezone",
-            description: "Timezone not recognized.",
+            description: `The timezone you provided, '${zone || "none"}', is not recognized. Please use a valid timezone, such as 'America/New_York', 'Europe/London', or 'Asia/Tokyo'. You can find a list of valid timezones using `/remindme help`.`,
             type: "error",
             interaction,
           }),
