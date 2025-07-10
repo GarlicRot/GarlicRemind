@@ -70,8 +70,9 @@ module.exports = {
           ephemeral: true,
           embeds: [
             buildEmbed({
-              title: "❌ Reminder not found",
-              description: "That reminder could not be found.",
+              title: "❌ Reminder Not Found",
+              description:
+                "The selected reminder could not be found. Use `/remindme view` to see your active recurring reminders and select one from the list.",
               type: "error",
               interaction,
             }),
@@ -84,8 +85,9 @@ module.exports = {
           ephemeral: true,
           embeds: [
             buildEmbed({
-              title: "❌ Not a recurring reminder",
-              description: "Only recurring reminders can be paused.",
+              title: "❌ Not a Recurring Reminder",
+              description:
+                "Only recurring reminders can be paused. Use `/remindme view` to find your recurring reminders.",
               type: "error",
               interaction,
             }),
@@ -98,8 +100,9 @@ module.exports = {
           ephemeral: true,
           embeds: [
             buildEmbed({
-              title: "⏸️ Already Paused",
-              description: "This reminder is already paused.",
+              title: "⏸️ Reminder Already Paused",
+              description:
+                "This reminder is already paused. Use `/remindme resume` to resume it or `/remindme view` to check your reminders.",
               type: "warning",
               interaction,
             }),
@@ -131,8 +134,9 @@ module.exports = {
         ephemeral: true,
         embeds: [
           buildEmbed({
-            title: "❌ Error",
-            description: "Something went wrong while pausing the reminder.",
+            title: "❌ Error Pausing Reminder",
+            description:
+              "An error occurred while trying to pause the reminder. Please try again or contact support if the issue persists.",
             type: "error",
             interaction,
           }),
