@@ -154,6 +154,7 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-07-10
+- `feat(remindme/every): enhance error messages for timezone, missing time, and invalid time` ([`34eab10`](https://github.com/GarlicRot/GarlicRemind/commit/34eab10887b0306c28624e4c5eeee1cb981c05d1)) by **GarlicRot**
 - `feat(remindme/clear): enhance error message for no reminders to clear` ([`11632bd`](https://github.com/GarlicRot/GarlicRemind/commit/11632bd00934448b874a1740abf8cb48ed863eda)) by **GarlicRot**
 - `feat(remindme/cancel): enhance error message for invalid reminder selection` ([`c5ac3d5`](https://github.com/GarlicRot/GarlicRemind/commit/c5ac3d5e49077c03d09c0da730736e395c4040cd)) by **GarlicRot**
 - `feat(remindme/at): enhance error messages for invalid time and time passed` ([`1d8a77b`](https://github.com/GarlicRot/GarlicRemind/commit/1d8a77b6a2f3b02d38cdeb82c8093bd08fdcdb5e)) by **GarlicRot**
