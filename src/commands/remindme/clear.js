@@ -28,8 +28,9 @@ module.exports = {
       return interaction.reply({
         embeds: [
           buildEmbed({
-            title: "📭 Nothing to Clear",
-            description: "You have no active reminders to clear.",
+            title: "📭 No Reminders to Clear",
+            description:
+              "You don't have any active reminders. Try setting a new reminder with `/remindme at` or `/remindme on` to get started.",
             type: "view",
             interaction,
           }),
