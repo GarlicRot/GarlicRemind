@@ -150,3 +150,8 @@ All notable changes to **GarlicRemind** are documented here.
 ### 📅 2025-07-08
 - `fix(reminderStore): handle DM send failures gracefully without deleting reminders` ([`79a0ef8`](https://github.com/GarlicRot/GarlicRemind/commit/79a0ef866db154a0a4a86029b9791ac50133a751)) by **GarlicRot**
 - `fix(remindme on): validate date format and prevent NaN parsing` ([`892ec11`](https://github.com/GarlicRot/GarlicRemind/commit/892ec1156ba3d5cc7621e45b4f3e14773d64ea56)) by **GarlicRot**
+
+---
+
+### 📅 2025-07-10
+- `feat(remindme/at): enhance error messages for invalid time and time passed` ([`1d8a77b`](https://github.com/GarlicRot/GarlicRemind/commit/1d8a77b6a2f3b02d38cdeb82c8093bd08fdcdb5e)) by **GarlicRot**
