@@ -116,7 +116,7 @@ module.exports = {
         embeds: [
           buildEmbed({
             title: "❌ Invalid Time Format",
-            description: "Use `07:00 PM` format.",
+            description: `The time you provided, '${timeStr}', is invalid. Please use the 12-hour format with AM/PM, such as '07:00 PM' or '12:30 AM'. Ensure hours are between 1 and 12, and minutes are between 00 and 59.`,
             type: "error",
             interaction,
           }),
@@ -138,7 +138,7 @@ module.exports = {
         embeds: [
           buildEmbed({
             title: "❌ Time Passed",
-            description: "That time has already passed today.",
+            description: "That time has already passed for today. If you meant a future date, use `/remindme on` with the date and time.",
             type: "error",
             interaction,
           }),
