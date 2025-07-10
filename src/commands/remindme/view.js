@@ -31,8 +31,9 @@ module.exports = {
       return interaction.reply({
         embeds: [
           buildEmbed({
-            title: "📭 No Reminders",
-            description: "You have no active reminders.",
+            title: "📭 No Active Reminders",
+            description:
+              "You don't have any active reminders. Try setting a new reminder with `/remindme at`, `/remindme on`, `/remindme in`, or `/remindme every` to get started.",
             type: "view",
             interaction,
           }),
