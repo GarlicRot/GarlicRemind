@@ -82,7 +82,8 @@ module.exports = {
         embeds: [
           buildEmbed({
             title: "🌍 Timezone Not Set",
-            description: "Use `/remindme timezone` to set your timezone.",
+            description:
+              "A timezone is required to set reminders. Please set your timezone using `/remindme timezone` (e.g., `/remindme timezone America/New_York`).",
             type: "warning",
             interaction,
           }),
@@ -117,7 +118,7 @@ module.exports = {
         embeds: [
           buildEmbed({
             title: "❌ Invalid Time Format",
-            description: "Use `01:30 PM` format.",
+            description: `The time you provided, '${timeStr}', is invalid. Please use the 12-hour format with AM/PM, such as '01:30 PM' or '09:00 AM'. Ensure hours are between 1 and 12, and minutes are between 00 and 59.`,
             type: "error",
             interaction,
           }),
@@ -132,7 +133,7 @@ module.exports = {
         embeds: [
           buildEmbed({
             title: "❌ Invalid Date Format",
-            description: "Use the format `MM-DD-YYYY` (e.g., `07-09-2025`).",
+            description: `The date you provided, '${dateStr || "none"}', is invalid. Please use the format 'MM-DD-YYYY', such as '07-09-2025' or '12-31-2025'.`,
             type: "error",
             interaction,
           }),
@@ -152,7 +153,7 @@ module.exports = {
         embeds: [
           buildEmbed({
             title: "❌ Invalid Date/Time",
-            description: "Time is in the past or invalid.",
+            description: `The date and time you provided ('${dateStr} ${timeStr}') are invalid or in the past. Please ensure the date is in the format 'MM-DD-YYYY' and the time is in the 12-hour format, and choose a future date and time.`,
             type: "error",
             interaction,
           }),
