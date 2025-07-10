@@ -61,8 +61,9 @@ module.exports = {
         flags: 64,
         embeds: [
           buildEmbed({
-            title: "❌ Invalid Selection",
-            description: "No reminder was selected. Please try again.",
+            title: "❌ No Reminder Selected",
+            description:
+              "Please select a reminder to resume. Use `/remindme view` to see your paused recurring reminders and choose one from the list.",
             type: "error",
             interaction,
           }),
@@ -85,8 +86,9 @@ module.exports = {
           flags: 64,
           embeds: [
             buildEmbed({
-              title: "❌ Reminder not found",
-              description: "That reminder could not be found.",
+              title: "❌ Reminder Not Found",
+              description:
+                "The selected reminder could not be found. Use `/remindme view` to see your paused recurring reminders and select one from the list.",
               type: "error",
               interaction,
             }),
@@ -99,8 +101,9 @@ module.exports = {
           flags: 64,
           embeds: [
             buildEmbed({
-              title: "❌ Not a recurring reminder",
-              description: "Only recurring reminders can be resumed.",
+              title: "❌ Not a Recurring Reminder",
+              description:
+                "Only recurring reminders can be resumed. Use `/remindme view` to find your paused recurring reminders.",
               type: "error",
               interaction,
             }),
@@ -113,8 +116,9 @@ module.exports = {
           flags: 64,
           embeds: [
             buildEmbed({
-              title: "⚠️ Reminder Not Paused",
-              description: "This reminder is already active.",
+              title: "⚠️ Reminder Already Active",
+              description:
+                "This reminder is already active and does not need to be resumed. Use `/remindme view` to check your reminders or `/remindme pause` to pause it.",
               type: "warning",
               interaction,
             }),
@@ -148,8 +152,9 @@ module.exports = {
         flags: 64,
         embeds: [
           buildEmbed({
-            title: "❌ Error",
-            description: "Something went wrong while resuming the reminder.",
+            title: "❌ Error Resuming Reminder",
+            description:
+              "An error occurred while trying to resume the reminder. Please try again or contact support if the issue persists.",
             type: "error",
             interaction,
           }),
