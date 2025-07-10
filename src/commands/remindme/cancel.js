@@ -28,8 +28,9 @@ const execute = async (interaction) => {
     return interaction.reply({
       embeds: [
         buildEmbed({
-          title: "❌ Invalid Selection",
-          description: "That reminder no longer exists.",
+          title: "❌ Invalid Reminder Selection",
+          description:
+            "The selected reminder could not be found. Use `/remindme view` to see your active reminders and select one from the list.",
           type: "error",
           interaction,
         }),
