@@ -154,6 +154,7 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-07-10
+- `feat(remindme/timezone): enhance error message for invalid timezone` ([`c796eee`](https://github.com/GarlicRot/GarlicRemind/commit/c796eee6b15eddc08746de0bb35efd42772a4db0)) by **GarlicRot**
 - `feat(remindme/resume): enhance error messages for resume subcommand` ([`6636378`](https://github.com/GarlicRot/GarlicRemind/commit/663637881e2dd072d579d170cd46668a93a79d86)) by **GarlicRot**
 - `feat(remindme/pause): enhance error messages for pause subcommand` ([`060b7c9`](https://github.com/GarlicRot/GarlicRemind/commit/060b7c9ad1a9eca887eb088fd2c47cb9c0e79795)) by **GarlicRot**
 - `feat(remindme/on): enhance error messages for timezone, time, date, and date/time` ([`6459130`](https://github.com/GarlicRot/GarlicRemind/commit/6459130e00200c88490ac6bbcd3288949ddc2b48)) by **GarlicRot**
