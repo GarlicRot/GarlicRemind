@@ -240,7 +240,8 @@ module.exports = {
         embeds: [
           buildEmbed({
             title: "🌍 Timezone Not Set",
-            description: "Use `/remindme timezone` to set your timezone.",
+            description:
+              "A timezone is required to set reminders with `/remindme on` or `/remindme at`. Please set your timezone using `/remindme timezone` (e.g., `/remindme timezone America/New_York`).",
             type: "warning",
             interaction,
           }),
@@ -342,7 +343,7 @@ module.exports = {
 
       if (sub === "resume" && focusedOption.name === "reminder") {
         const resumeHandler = require("./resume");
-        return resumeHandler.autocomplete(interaction);
+        return cancelHandler.autocomplete(interaction);
       }
 
       if (sub === "timezone" && focusedOption.name === "zone") {
@@ -354,7 +355,13 @@ module.exports = {
         return interaction.respond(matches);
       }
     } catch (err) {
-      console.error("❌ Autocomplete error:", err);
+      logger.error("Autocomplete failed in remindme.js:", err);
+      return interaction.respond([
+        {
+          name: "❌ Error",
+          value: "An error occurred while fetching suggestions. Please try again.",
+        },
+      ]);
     }
   },
 };
