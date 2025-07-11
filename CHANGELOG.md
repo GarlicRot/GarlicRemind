@@ -154,6 +154,7 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-07-10
+- `fix(remindme/timezone): correct syntax error and command reference in error message` ([`7316907`](https://github.com/GarlicRot/GarlicRemind/commit/7316907079b05b1fbe46e42e3e64b056ef9aaba4)) by **GarlicRot**
 - `feat(help): enhance help command descriptions for clarity and usability` ([`4773a0a`](https://github.com/GarlicRot/GarlicRemind/commit/4773a0aa49008474eaba7e7487f946bfdfbc08b9)) by **GarlicRot**
 - `feat(remindme): enhance error messages and fix autocomplete bug` ([`45858aa`](https://github.com/GarlicRot/GarlicRemind/commit/45858aa3d48e521023dc729483ff4b9155f45743)) by **GarlicRot**
 - `feat(remindme/view): enhance error message for no active reminders` ([`d6b91aa`](https://github.com/GarlicRot/GarlicRemind/commit/d6b91aaa97d773463ca36dae6f88b7257b15d334)) by **GarlicRot**
