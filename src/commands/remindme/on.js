@@ -176,6 +176,18 @@ module.exports = {
       client
     );
 
+    if (!interaction.guild) {
+      await interaction.followUp({
+        embeds: [buildEmbed({
+          title: "⚠️ DM Reminder Note",
+          description: "Your reminder is set, but it may not deliver in DMs if your privacy settings block bot messages. Enable 'Allow direct messages from server members' in Discord Settings > Privacy & Safety, or set reminders in servers for reliability.",
+          type: "warning",
+          interaction,
+        })],
+        ephemeral: true,
+      });
+    }
+
     const username = `${user.globalName || user.username} (${user.id})`;
     const channel = interaction.channel?.name || "DM";
 
