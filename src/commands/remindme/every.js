@@ -50,7 +50,7 @@ module.exports = {
 
   async execute(interaction) {
     const intervalRaw = interaction.options.getString("interval");
-    const interval = intervalRaw.toLowerCase();
+    let interval = intervalRaw.toLowerCase();
     const timeStr = interaction.options.getString("time");
     const rawMessage = interaction.options.getString("message");
 
@@ -146,7 +146,9 @@ module.exports = {
       const increments = {
         hour: { hours: 1 },
         day: { days: 1 },
+        daily: { days: 1 }, // Support "daily" as synonym for "day"
         week: { weeks: 1 },
+        monthly: { months: 1 }, // Optional: support "monthly" if users use it
         month: { months: 1 },
       };
       if (target <= now) {
@@ -155,9 +157,12 @@ module.exports = {
     }
 
     const id = crypto.randomUUID();
-    const repeatMeta = { type: interval };
+    let repeatType = interval;
+    if (interval === "daily") repeatType = "day"; // Normalize to "day" for consistency in repeatMeta
+    if (interval === "monthly") repeatType = "month"; // Optional normalization
+    const repeatMeta = { type: repeatType };
 
-    if (interval === "month") {
+    if (repeatType === "month") {
       repeatMeta.userDayOfMonth = now.day;
     }
 
