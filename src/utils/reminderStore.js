@@ -124,9 +124,16 @@ async function scheduleSingle(reminder, client) {
   if (delay < 0) return;
 
   try {
-    const channel = await client.channels.fetch(reminder.channelId);
-
     const timeout = setTimeout(async () => {
+      let channel;
+      try {
+        channel = await client.channels.fetch(reminder.channelId);
+      } catch (fetchErr) {
+        logger.warn(
+          `⚠️ Channel fetch failed for reminder (ID: ${reminder.id}): ${fetchErr.message}. Falling back to user DM.`
+        );
+      }
+
       try {
         const user = await client.users.fetch(reminder.userId);
 
@@ -139,53 +146,88 @@ async function scheduleSingle(reminder, client) {
           interaction: {
             user,
             client,
-            guildId: channel.guildId,
-            channelId: channel.id,
+            guildId: channel?.guildId,
+            channelId: channel?.id,
             id: reminder.messageId || undefined,
             createdTimestamp: reminder.remindAt,
           },
         });
 
-        try {
+        if (channel) {
           await channel.send({
             content: `<@${reminder.userId}>`,
             embeds: [embed],
           });
-
-          const userTag = await logger.getUsername(client, reminder.userId);
-          logger.success(
-            `🔔 Reminder sent to ${userTag} in ${reminder.channelId} (ID: ${reminder.id})`
+        } else {
+          // Fallback to direct DM
+          await user.send({ embeds: [embed] });
+          logger.info(
+            `📩 Fell back to DM for reminder (ID: ${reminder.id}) as original channel unavailable.`
           );
-
-          if (reminder.recurring && reminder.repeatMeta?.type) {
-            const next = calculateNextOccurrence(reminder);
-            if (next) {
-              reminder.remindAt = next.toMillis();
-              await scheduleReminder(reminder, client);
-              logger.info(
-                `⏩ Rescheduled recurring reminder (ID: ${reminder.id})`
-              );
-            } else {
-              await removeReminder(reminder.id);
-            }
-          } else {
-            await removeReminder(reminder.id);
-          }
-        } catch (sendErr) {
-          if (sendErr.code === 50007) {
-            logger.error(
-              `❌ Failed to send reminder (ID: ${reminder.id}): Cannot send messages to user ${reminder.userId} – DMs may be disabled or bot blocked.`
-            );
-          } else {
-            logger.error(
-              `❌ Failed to send reminder (ID: ${reminder.id}): ${sendErr.message}`
-            );
-          }
         }
-      } catch (userErr) {
-        logger.error(
-          `❌ Failed to fetch user or send reminder (ID: ${reminder.id}): ${userErr.message}`
-        );
+
+        const userTag = await logger.getUsername(client, reminder.userId);
+        logger.success(`🔔 Reminder sent to ${userTag} (ID: ${reminder.id})`);
+
+        // Reset failure count on success
+        if (reminder.failureCount > 0) {
+          await db
+            .collection("discord")
+            .doc("reminders")
+            .collection("entries")
+            .doc(reminder.id)
+            .set({ failureCount: 0 }, { merge: true });
+        }
+      } catch (err) {
+        if (err.code === 50007) {
+          logger.error(
+            `❌ Failed to send reminder (ID: ${reminder.id}): Cannot send messages to user ${reminder.userId} – DMs may be disabled or bot blocked.`
+          );
+          // Increment failure count and auto-pause if threshold reached
+          const failureCount = (reminder.failureCount || 0) + 1;
+          await db
+            .collection("discord")
+            .doc("reminders")
+            .collection("entries")
+            .doc(reminder.id)
+            .set({ failureCount }, { merge: true });
+          if (reminder.recurring && failureCount >= 3) {
+            await db
+              .collection("discord")
+              .doc("reminders")
+              .collection("entries")
+              .doc(reminder.id)
+              .set({ paused: true }, { merge: true });
+            logger.warn(
+              `⏸️ Auto-paused recurring reminder (ID: ${reminder.id}) after ${failureCount} failures. User can resume with /remindme resume.`
+            );
+          }
+        } else {
+          logger.error(
+            `❌ Failed to fetch user/send reminder (ID: ${reminder.id}): ${err.message}`
+          );
+        }
+      }
+
+      // Always manage lifecycle after send attempt (success or failure)
+      if (reminder.recurring && reminder.repeatMeta?.type) {
+        const next = calculateNextOccurrence(reminder);
+        if (next) {
+          reminder.remindAt = next.toMillis();
+          await scheduleReminder(reminder, client); // Saves updated remindAt and re-schedules
+          logger.info(
+            `⏩ Rescheduled recurring reminder (ID: ${
+              reminder.id
+            }) to ${next.toISO()}`
+          );
+        } else {
+          await removeReminder(reminder.id);
+          logger.info(
+            `🧼 Removed recurring reminder (ID: ${reminder.id}) as no next occurrence found.`
+          );
+        }
+      } else {
+        await removeReminder(reminder.id);
       }
     }, delay);
 

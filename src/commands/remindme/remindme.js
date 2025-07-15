@@ -343,7 +343,7 @@ module.exports = {
 
       if (sub === "resume" && focusedOption.name === "reminder") {
         const resumeHandler = require("./resume");
-        return cancelHandler.autocomplete(interaction);
+        return resumeHandler.autocomplete(interaction);
       }
 
       if (sub === "timezone" && focusedOption.name === "zone") {
@@ -359,7 +359,8 @@ module.exports = {
       return interaction.respond([
         {
           name: "❌ Error",
-          value: "An error occurred while fetching suggestions. Please try again.",
+          value:
+            "An error occurred while fetching suggestions. Please try again.",
         },
       ]);
     }

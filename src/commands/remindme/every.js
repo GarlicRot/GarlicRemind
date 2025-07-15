@@ -169,6 +169,7 @@ module.exports = {
       message,
       recurring: true,
       repeatMeta,
+      origin: "every",
     };
 
     await scheduleReminder(reminderData, client);

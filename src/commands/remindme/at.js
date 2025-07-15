@@ -138,7 +138,8 @@ module.exports = {
         embeds: [
           buildEmbed({
             title: "❌ Time Passed",
-            description: "That time has already passed for today. If you meant a future date, use `/remindme on` with the date and time.",
+            description:
+              "That time has already passed for today. If you meant a future date, use `/remindme on` with the date and time.",
             type: "error",
             interaction,
           }),
@@ -157,7 +158,7 @@ module.exports = {
     );
 
     await scheduleReminder(
-      { userId, channelId, remindAt, message, id, messageId },
+      { userId, channelId, remindAt, message, id, messageId, origin: "at" },
       client
     );
 
