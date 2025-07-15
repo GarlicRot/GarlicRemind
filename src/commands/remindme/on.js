@@ -172,7 +172,7 @@ module.exports = {
     );
 
     await scheduleReminder(
-      { userId, channelId, remindAt, message, id, messageId },
+      { userId, channelId, remindAt, message, id, messageId, origin: "on" },
       client
     );
 
