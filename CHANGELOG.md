@@ -176,4 +176,5 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-07-15
+- `feat(remindme/in): add origin field for improved reminder grouping in view` ([`848f45d`](https://github.com/GarlicRot/GarlicRemind/commit/848f45d57af111dee72479284cdd149c9b3e269e)) by **GarlicRot**
 - `feat(remindme/on): add origin field for improved reminder grouping in view` ([`030a6e5`](https://github.com/GarlicRot/GarlicRemind/commit/030a6e59f0e907c10353f5df2c27d07e8279a103)) by **GarlicRot**
