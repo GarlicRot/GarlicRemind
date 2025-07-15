@@ -176,6 +176,7 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-07-15
+- `feat(remindme/in): add DM warning for reminders set in direct messages` ([`0fbcb70`](https://github.com/GarlicRot/GarlicRemind/commit/0fbcb70086e8aa59f18d66ac3669b933aefb1824)) by **GarlicRot**
 - `feat(remindme/on): add DM warning for reminders set in direct messages` ([`f6b95f1`](https://github.com/GarlicRot/GarlicRemind/commit/f6b95f1a7c7a7af6da9bb61b3710f61548c0cd9e)) by **GarlicRot**
 - `feat(remindme/every): add support for daily as synonym for day in recurring intervals` ([`443ab07`](https://github.com/GarlicRot/GarlicRemind/commit/443ab0749cbee4958152b9b0383453a35d10af1d)) by **GarlicRot**
 - `feat(remindme/in): add origin field for improved reminder grouping in view` ([`848f45d`](https://github.com/GarlicRot/GarlicRemind/commit/848f45d57af111dee72479284cdd149c9b3e269e)) by **GarlicRot**
