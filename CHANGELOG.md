@@ -172,3 +172,8 @@ All notable changes to **GarlicRemind** are documented here.
 
 ### 📅 2025-07-14
 - `feat(reminders): enhance reminder grouping, add DM fallback, and improve failure handling` ([`cda2587`](https://github.com/GarlicRot/GarlicRemind/commit/cda25878f77715eaa9357735e662f55d2d798d43)) by **GarlicRot**
+
+---
+
+### 📅 2025-07-15
+- `feat(remindme/on): add origin field for improved reminder grouping in view` ([`030a6e5`](https://github.com/GarlicRot/GarlicRemind/commit/030a6e59f0e907c10353f5df2c27d07e8279a103)) by **GarlicRot**
