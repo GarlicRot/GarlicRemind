@@ -1,9 +1,9 @@
 /**
  * -----------------------------------------------------------
- * GarlicRemind - Timezone Store Utility (with Cache + TTL)
+ * GarlicRemind - Timezone and User Flags Store Utility (with Cache + TTL)
  * -----------------------------------------------------------
  *
- * Description: Stores and retrieves user timezones from Firebase.
+ * Description: Stores and retrieves user timezones and flags (e.g., dm_warning_shown) from Firebase.
  *
  * Created by: GarlicRot
  * GitHub: https://github.com/GarlicRot
@@ -19,8 +19,8 @@ const logger = require("./logger");
 const COLLECTION_NAME = "user_timezones";
 const CACHE_TTL = 1000 * 60 * 30; // 30 minutes
 
-// Cache structure: Map<userId, { value: string, expiresAt: number }>
-const timezoneCache = new Map();
+// Cache structure: Map<userId, { timezone: string, dm_warning_shown: boolean, expiresAt: number }>
+const userCache = new Map();
 
 /**
  * Save a user's timezone in Firestore and cache it with TTL.
@@ -29,10 +29,15 @@ const timezoneCache = new Map();
  */
 async function setUserTimezone(userId, timezone) {
   try {
-    await db.collection(COLLECTION_NAME).doc(userId).set({ timezone });
+    await db
+      .collection(COLLECTION_NAME)
+      .doc(userId)
+      .set({ timezone }, { merge: true });
 
-    timezoneCache.set(userId, {
-      value: timezone,
+    const cached = userCache.get(userId) || {};
+    userCache.set(userId, {
+      ...cached,
+      timezone,
       expiresAt: Date.now() + CACHE_TTL,
     });
 
@@ -48,40 +53,81 @@ async function setUserTimezone(userId, timezone) {
 }
 
 /**
- * Retrieve a user's timezone with TTL-based caching.
+ * Set a user flag (e.g., dm_warning_shown) in Firestore and update cache.
  * @param {string} userId
- * @returns {Promise<string|null>}
+ * @param {string} flagName
+ * @param {boolean} value
  */
-async function getUserTimezone(userId) {
-  const cached = timezoneCache.get(userId);
+async function setUserFlag(userId, flagName, value) {
+  try {
+    await db
+      .collection(COLLECTION_NAME)
+      .doc(userId)
+      .set({ [flagName]: value }, { merge: true });
+
+    const cached = userCache.get(userId) || {};
+    userCache.set(userId, {
+      ...cached,
+      [flagName]: value,
+      expiresAt: Date.now() + CACHE_TTL,
+    });
+
+    const username = await logger.getUsername(global.client, userId);
+    logger.info(`🚩 Set flag ${flagName}=${value} for ${username}`);
+  } catch (error) {
+    const username = await logger.getUsername(global.client, userId);
+    logger.error(
+      `❌ Failed to set flag ${flagName} for ${username}: ${error.message}`
+    );
+  }
+}
+
+/**
+ * Retrieve a user's timezone and flags with TTL-based caching.
+ * @param {string} userId
+ * @returns {Promise<{timezone: string|null, dm_warning_shown: boolean}>}
+ */
+async function getUserData(userId) {
+  const cached = userCache.get(userId);
 
   const username = await logger.getUsername(global.client, userId);
 
   if (cached && cached.expiresAt > Date.now()) {
-    logger.info(`⚡ Cache hit for ${username} → ${cached.value}`);
-    return cached.value;
+    logger.info(`⚡ Cache hit for ${username}`);
+    return {
+      timezone: cached.timezone || null,
+      dm_warning_shown: cached.dm_warning_shown || false,
+    };
   }
 
   try {
     const doc = await db.collection(COLLECTION_NAME).doc(userId).get();
-    const timezone = doc.exists ? doc.data().timezone : null;
+    const data = doc.exists ? doc.data() : {};
+    const timezone = data.timezone || null;
+    const dm_warning_shown = data.dm_warning_shown || false;
 
-    if (timezone) {
-      timezoneCache.set(userId, {
-        value: timezone,
-        expiresAt: Date.now() + CACHE_TTL,
-      });
-    }
+    userCache.set(userId, {
+      timezone,
+      dm_warning_shown,
+      expiresAt: Date.now() + CACHE_TTL,
+    });
 
-    logger.info(`📡 Fetched timezone for ${username} → ${timezone || "none"}`);
-    return timezone;
+    logger.info(
+      `📡 Fetched data for ${username} → timezone: ${
+        timezone || "none"
+      }, dm_warning_shown: ${dm_warning_shown}`
+    );
+    return { timezone, dm_warning_shown };
   } catch (error) {
-    logger.error(`❌ Failed to get timezone for ${username}: ${error.message}`);
-    return null;
+    logger.error(
+      `❌ Failed to get user data for ${username}: ${error.message}`
+    );
+    return { timezone: null, dm_warning_shown: false };
   }
 }
 
 module.exports = {
   setUserTimezone,
-  getUserTimezone,
+  setUserFlag,
+  getUserData,
 };

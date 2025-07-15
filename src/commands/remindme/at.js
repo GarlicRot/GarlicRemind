@@ -16,7 +16,7 @@
 
 const crypto = require("node:crypto");
 const { DateTime } = require("luxon");
-const { getUserTimezone } = require("../../utils/timezoneStore");
+const { getUserData, setUserFlag } = require("../../utils/timezoneStore");
 const { scheduleReminder } = require("../../utils/reminderStore");
 const { buildEmbed } = require("../../utils/embedBuilder");
 const logger = require("../../utils/logger");
@@ -76,7 +76,7 @@ module.exports = {
     const channelId =
       interaction.channel?.id || (await interaction.user.createDM()).id;
 
-    const timezone = await getUserTimezone(userId);
+    const { timezone, dm_warning_shown } = await getUserData(userId);
     if (!timezone) {
       return interaction.reply({
         embeds: [
@@ -161,6 +161,23 @@ module.exports = {
       { userId, channelId, remindAt, message, id, messageId, origin: "at" },
       client
     );
+
+    // DM Warning logic: Show only once, then mark as shown
+    if (!interaction.guild && !dm_warning_shown) {
+      await interaction.followUp({
+        embeds: [
+          buildEmbed({
+            title: "⚠️ DM Reminder Note",
+            description:
+              "Your reminder is set, but it may not deliver in DMs if your privacy settings block bot messages. Enable 'Allow direct messages from server members' in Discord Settings > Privacy & Safety, or set reminders in servers for reliability.",
+            type: "warning",
+            interaction,
+          }),
+        ],
+        ephemeral: true,
+      });
+      await setUserFlag(userId, "dm_warning_shown", true); // Mark as shown after displaying
+    }
 
     const username = await logger.getUsername(client, userId);
     const channelName = interaction.channel?.name || "DM";
