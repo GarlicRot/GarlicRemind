@@ -22,7 +22,7 @@ const {
   removeReminder,
 } = require("../../utils/reminderStore");
 const {
-  getUserTimezone,
+  getUserData,
   setUserTimezone,
 } = require("../../utils/timezoneStore");
 const { buildEmbed, COLORS } = require("../../utils/embedBuilder");
@@ -234,7 +234,7 @@ module.exports = {
       return inHandler.execute(interaction);
     }
 
-    const timezone = await getUserTimezone(userId);
+    const { timezone } = await getUserData(userId);
     if ((sub === "on" || sub === "at") && !timezone) {
       return interaction.reply({
         embeds: [
@@ -298,7 +298,7 @@ module.exports = {
       if (!focusedOption) return;
 
       const userId = interaction.user.id;
-      const timezone = await getUserTimezone(userId);
+      const { timezone } = await getUserData(userId);
 
       // Fallback if timezone isn't set and subcommand requires it
       if ((sub === "on" || sub === "at") && !timezone) {
