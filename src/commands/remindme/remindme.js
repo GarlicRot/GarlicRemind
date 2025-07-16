@@ -21,10 +21,7 @@ const {
   getReminders,
   removeReminder,
 } = require("../../utils/reminderStore");
-const {
-  getUserData,
-  setUserTimezone,
-} = require("../../utils/timezoneStore");
+const { getUserData, setUserTimezone } = require("../../utils/timezoneStore");
 const { buildEmbed, COLORS } = require("../../utils/embedBuilder");
 const logger = require("../../utils/logger");
 
