@@ -176,6 +176,7 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-07-15
+- `fix(remindme): update timezone fetch to use getUserData for flag compatibility` ([`0e013fe`](https://github.com/GarlicRot/GarlicRemind/commit/0e013fea7f3d7c01dc3c7bfd1a0073f2731d21fd)) by **GarlicRot**
 - `feat(remindme): add one-time DM warning for reminders set in direct messages` ([`2407652`](https://github.com/GarlicRot/GarlicRemind/commit/2407652199ee1cdfeb2a28a1a21ffe06ec0eda9a)) by **GarlicRot**
 - `feat(remindme/in): add DM warning for reminders set in direct messages` ([`0fbcb70`](https://github.com/GarlicRot/GarlicRemind/commit/0fbcb70086e8aa59f18d66ac3669b933aefb1824)) by **GarlicRot**
 - `feat(remindme/on): add DM warning for reminders set in direct messages` ([`f6b95f1`](https://github.com/GarlicRot/GarlicRemind/commit/f6b95f1a7c7a7af6da9bb61b3710f61548c0cd9e)) by **GarlicRot**
