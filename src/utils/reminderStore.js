@@ -134,6 +134,7 @@ async function scheduleSingle(reminder, client) {
         );
       }
 
+      let success = false;
       try {
         const user = await client.users.fetch(reminder.userId);
 
@@ -166,6 +167,7 @@ async function scheduleSingle(reminder, client) {
           );
         }
 
+        success = true;
         const userTag = await logger.getUsername(client, reminder.userId);
         logger.success(`🔔 Reminder sent to ${userTag} (ID: ${reminder.id})`);
 
@@ -179,37 +181,35 @@ async function scheduleSingle(reminder, client) {
             .set({ failureCount: 0 }, { merge: true });
         }
       } catch (err) {
-        if (err.code === 50007) {
-          logger.error(
-            `❌ Failed to send reminder (ID: ${reminder.id}): Cannot send messages to user ${reminder.userId} – DMs may be disabled or bot blocked.`
-          );
-          // Increment failure count and auto-pause if threshold reached
-          const failureCount = (reminder.failureCount || 0) + 1;
+        logger.error(
+          `❌ Failed to fetch user/send reminder (ID: ${reminder.id}): ${err.message}`
+        );
+
+        // Increment failure count on any error
+        const failureCount = (reminder.failureCount || 0) + 1;
+        await db
+          .collection("discord")
+          .doc("reminders")
+          .collection("entries")
+          .doc(reminder.id)
+          .set({ failureCount }, { merge: true });
+
+        // Auto-pause if threshold reached for recurring
+        if (reminder.recurring && failureCount >= 3) {
           await db
             .collection("discord")
             .doc("reminders")
             .collection("entries")
             .doc(reminder.id)
-            .set({ failureCount }, { merge: true });
-          if (reminder.recurring && failureCount >= 3) {
-            await db
-              .collection("discord")
-              .doc("reminders")
-              .collection("entries")
-              .doc(reminder.id)
-              .set({ paused: true }, { merge: true });
-            logger.warn(
-              `⏸️ Auto-paused recurring reminder (ID: ${reminder.id}) after ${failureCount} failures. User can resume with /remindme resume.`
-            );
-          }
-        } else {
-          logger.error(
-            `❌ Failed to fetch user/send reminder (ID: ${reminder.id}): ${err.message}`
+            .set({ paused: true, pausedAt: Date.now() }, { merge: true });
+          logger.warn(
+            `⏸️ Auto-paused recurring reminder (ID: ${reminder.id}) after ${failureCount} failures. User can resume with /remindme resume.`
           );
+          return; // Skip rescheduling
         }
       }
 
-      // Always manage lifecycle after send attempt (success or failure)
+      // Manage lifecycle: reschedule only if not auto-paused (for recurring)
       if (reminder.recurring && reminder.repeatMeta?.type) {
         const next = calculateNextOccurrence(reminder);
         if (next) {
@@ -286,9 +286,39 @@ async function getReminders() {
   return snapshot.docs.map((doc) => doc.data());
 }
 
+async function cleanupStaleReminders() {
+  const THRESHOLD_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+  const cutoff = Date.now() - THRESHOLD_MS;
+
+  try {
+    const snapshot = await db
+      .collection("discord")
+      .doc("reminders")
+      .collection("entries")
+      .where("paused", "==", true)
+      .where("pausedAt", "<", cutoff)
+      .get();
+
+    if (snapshot.empty) {
+      logger.info("[Cleanup] No stale paused reminders found.");
+      return;
+    }
+
+    for (const doc of snapshot.docs) {
+      await removeReminder(doc.id);
+      logger.info(`🗑️ Deleted stale paused reminder (ID: ${doc.id}) after 30+ days.`);
+    }
+
+    logger.success(`[Cleanup] Deleted ${snapshot.size} stale paused reminders.`);
+  } catch (err) {
+    logger.error(`[Cleanup] Failed to clean up stale reminders: ${err.message}`);
+  }
+}
+
 module.exports = {
   loadReminders,
   scheduleReminder,
   removeReminder,
   getReminders,
+  cleanupStaleReminders,
 };
