@@ -3,7 +3,7 @@
  * GarlicRemind - Subcommand: /remindme pause
  * -----------------------------------------------------------
  *
- * Description: Pauses a recurring reminder (must not already be paused).
+ * Description: Pauses a recurring reminder.
  *
  * Created by: GarlicRot
  * GitHub: https://github.com/GarlicRot
@@ -13,6 +13,7 @@
  */
 
 const { db } = require("../../config/firebase");
+const { scheduleReminder } = require("../../utils/reminderStore");
 const { buildEmbed } = require("../../utils/embedBuilder");
 const logger = require("../../utils/logger");
 
@@ -29,7 +30,7 @@ module.exports = {
         .get();
 
       const reminders = snapshot.docs
-        .map((doc) => doc.data())
+        .map((doc) => ({ id: doc.id, ...doc.data() })) // ✅ include document ID
         .filter((r) => r.recurring && !r.paused);
 
       const input = interaction.options.getFocused().toLowerCase();
@@ -55,6 +56,21 @@ module.exports = {
   async execute(interaction) {
     const reminderId = interaction.options.getString("reminder");
 
+    if (!reminderId) {
+      return interaction.reply({
+        flags: 64,
+        embeds: [
+          buildEmbed({
+            title: "❌ No Reminder Selected",
+            description:
+              "Please select a reminder to pause. Use `/remindme view` to see your active recurring reminders and choose one from the list.",
+            type: "error",
+            interaction,
+          }),
+        ],
+      });
+    }
+
     try {
       const docRef = db
         .collection("discord")
@@ -67,7 +83,7 @@ module.exports = {
 
       if (!doc.exists || !reminder) {
         return interaction.reply({
-          ephemeral: true,
+          flags: 64,
           embeds: [
             buildEmbed({
               title: "❌ Reminder Not Found",
@@ -82,12 +98,12 @@ module.exports = {
 
       if (!reminder.recurring) {
         return interaction.reply({
-          ephemeral: true,
+          flags: 64,
           embeds: [
             buildEmbed({
               title: "❌ Not a Recurring Reminder",
               description:
-                "Only recurring reminders can be paused. Use `/remindme view` to find your recurring reminders.",
+                "Only recurring reminders can be paused. Use `/remindme view` to find your active recurring reminders.",
               type: "error",
               interaction,
             }),
@@ -97,12 +113,12 @@ module.exports = {
 
       if (reminder.paused) {
         return interaction.reply({
-          ephemeral: true,
+          flags: 64,
           embeds: [
             buildEmbed({
-              title: "⏸️ Reminder Already Paused",
+              title: "⚠️ Reminder Already Paused",
               description:
-                "This reminder is already paused. Use `/remindme resume` to resume it or `/remindme view` to check your reminders.",
+                "This reminder is already paused. Use `/remindme view` to check your reminders or `/remindme resume` to resume it.",
               type: "warning",
               interaction,
             }),
@@ -110,13 +126,15 @@ module.exports = {
         });
       }
 
-      await docRef.update({ paused: true });
+      const updatedReminder = { ...reminder, paused: true, pausedAt: Date.now(), id: reminderId };
+      await scheduleReminder(updatedReminder, interaction.client); // This will save but not schedule since paused
+
       logger.info(
         `⏸️ Reminder paused (ID: ${reminderId}) for ${interaction.user.tag}`
       );
 
       return interaction.reply({
-        ephemeral: true,
+        flags: 64,
         embeds: [
           buildEmbed({
             title: "⏸️ Reminder Paused",
@@ -131,7 +149,7 @@ module.exports = {
     } catch (err) {
       logger.error("Failed to pause reminder:", err);
       return interaction.reply({
-        ephemeral: true,
+        flags: 64,
         embeds: [
           buildEmbed({
             title: "❌ Error Pausing Reminder",
