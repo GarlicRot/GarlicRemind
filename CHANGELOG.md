@@ -188,5 +188,6 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2025-07-21
+- `feat(index): schedule daily stale reminder cleanup cron job` ([`4bbe458`](https://github.com/GarlicRot/GarlicRemind/commit/4bbe4583e63b92998c8ba88520da2417bd8c372f)) by **GarlicRot**
 - `feat(pause): add pausedAt timestamp to manual pause command` ([`424dfcb`](https://github.com/GarlicRot/GarlicRemind/commit/424dfcbb4bb1e1e1d5af6f29a2f2ee4300769724)) by **GarlicRot**
 - `feat(reminderStore): add pausedAt timestamp and stale reminder cleanup` ([`92a34b3`](https://github.com/GarlicRot/GarlicRemind/commit/92a34b3d514c57ae85fe9c41a5d78955bc22f494)) by **GarlicRot**
