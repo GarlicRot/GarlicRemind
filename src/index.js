@@ -122,6 +122,14 @@ client.once("ready", async () => {
       logger.error(`[VoiceCounter] Interval update failed: ${err.message}`)
     );
   }, 1000 * 60 * 30);
+
+  const cron = require("node-cron");
+  const { cleanupStaleReminders } = require("./utils/reminderStore");
+
+  cron.schedule("0 0 * * *", async () => {
+    await cleanupStaleReminders();
+    logger.info("[Cron] Daily stale reminder cleanup completed.");
+  });
 });
 
 // Login
