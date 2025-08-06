@@ -160,7 +160,6 @@ async function scheduleSingle(reminder, client) {
             embeds: [embed],
           });
         } else {
-          // Fallback to direct DM
           await user.send({ embeds: [embed] });
           logger.info(
             `📩 Fell back to DM for reminder (ID: ${reminder.id}) as original channel unavailable.`
@@ -171,7 +170,6 @@ async function scheduleSingle(reminder, client) {
         const userTag = await logger.getUsername(client, reminder.userId);
         logger.success(`🔔 Reminder sent to ${userTag} (ID: ${reminder.id})`);
 
-        // Reset failure count on success
         if (reminder.failureCount > 0) {
           await db
             .collection("discord")
@@ -185,7 +183,6 @@ async function scheduleSingle(reminder, client) {
           `❌ Failed to fetch user/send reminder (ID: ${reminder.id}): ${err.message}`
         );
 
-        // Increment failure count on any error
         const failureCount = (reminder.failureCount || 0) + 1;
         await db
           .collection("discord")
@@ -194,7 +191,6 @@ async function scheduleSingle(reminder, client) {
           .doc(reminder.id)
           .set({ failureCount }, { merge: true });
 
-        // Auto-pause if threshold reached for recurring
         if (reminder.recurring && failureCount >= 3) {
           await db
             .collection("discord")
@@ -203,18 +199,18 @@ async function scheduleSingle(reminder, client) {
             .doc(reminder.id)
             .set({ paused: true, pausedAt: Date.now() }, { merge: true });
           logger.warn(
-            `⏸️ Auto-paused recurring reminder (ID: ${reminder.id}) after ${failureCount} failures. User can resume with /remindme resume.`
+            `⏸️ Auto-paused recurring reminder (ID: ${reminder.id}) after ${failureCount} failures.`
           );
-          return; // Skip rescheduling
+          return;
         }
       }
 
-      // Manage lifecycle: reschedule only if not auto-paused (for recurring)
-      if (reminder.recurring && reminder.repeatMeta?.type) {
+      // ✅ Only reschedule if the message was successfully sent
+      if (success && reminder.recurring && reminder.repeatMeta?.type) {
         const next = calculateNextOccurrence(reminder);
         if (next) {
           reminder.remindAt = next.toMillis();
-          await scheduleReminder(reminder, client); // Saves updated remindAt and re-schedules
+          await scheduleReminder(reminder, client);
           logger.info(
             `⏩ Rescheduled recurring reminder (ID: ${
               reminder.id
@@ -226,7 +222,7 @@ async function scheduleSingle(reminder, client) {
             `🧼 Removed recurring reminder (ID: ${reminder.id}) as no next occurrence found.`
           );
         }
-      } else {
+      } else if (!reminder.recurring) {
         await removeReminder(reminder.id);
       }
     }, delay);
@@ -287,7 +283,7 @@ async function getReminders() {
 }
 
 async function cleanupStaleReminders() {
-  const THRESHOLD_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+  const THRESHOLD_MS = 30 * 24 * 60 * 60 * 1000;
   const cutoff = Date.now() - THRESHOLD_MS;
 
   try {
