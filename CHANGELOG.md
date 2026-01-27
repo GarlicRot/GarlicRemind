@@ -200,4 +200,5 @@ All notable changes to **GarlicRemind** are documented here.
 ---
 
 ### 📅 2026-01-27
+- `Refactor message handling for dev commands and announcements` ([`df13676`](https://github.com/GarlicRot/GarlicRemind/commit/df13676dbdc79d0da7ab2abf4484fc8b38ec0987)) by **GarlicRot**
 - `Add .broadcast command for dev message broadcasts` ([`0458bfd`](https://github.com/GarlicRot/GarlicRemind/commit/0458bfd26086b8c81fd4166ef4238ae53a1887cf)) by **GarlicRot**
