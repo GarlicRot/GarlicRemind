@@ -24,7 +24,17 @@ const logger = require("../utils/logger");
 
 const SUPPORT_GUILD_ID = process.env.SUPPORT_GUILD_ID;
 const DEV_ID = "119982148945051651";
-const ALLOWED_CHANNELS = ["1382439964666757192", "1385739675515359353"];
+
+// Channels where regular messages get reposted as embeds
+const ANNOUNCEMENT_CHANNELS = [
+  "1382439964666757192", // announcements
+  "1385739675515359353", // rules
+];
+
+// Channels where dev-only commands
+const DEV_COMMAND_CHANNELS = [
+  "1382439964666757195",
+];
 
 module.exports = {
   name: "messageCreate",
@@ -33,7 +43,6 @@ module.exports = {
     if (message.author.bot) return;
     if (message.author.id !== DEV_ID) return;
     if (message.guild?.id !== SUPPORT_GUILD_ID) return;
-    if (!ALLOWED_CHANNELS.includes(message.channel.id)) return;
     if (!message.content?.trim()) return;
 
     const content = message.content.trim();
@@ -41,10 +50,12 @@ module.exports = {
     // -------------------------------------------------------
     // Dev-only broadcast command:
     // .broadcast [message]
-    // Sends a DM to all users who have at least one
-    // active (non-paused, future) reminder.
+    // Allowed ONLY in the dev/mod channel(s)
     // -------------------------------------------------------
-    if (content.toLowerCase().startsWith(".broadcast")) {
+    if (
+      DEV_COMMAND_CHANNELS.includes(message.channel.id) &&
+      content.toLowerCase().startsWith(".broadcast")
+    ) {
       const broadcastText = content.slice(".broadcast".length).trim();
 
       if (!broadcastText) {
@@ -100,7 +111,7 @@ module.exports = {
             );
           }
 
-          // Small delay to avoid hitting DM rate limits too hard
+          // Small delay to reduce risk of rate limits
           await new Promise((resolve) => setTimeout(resolve, 250));
         }
 
@@ -118,10 +129,13 @@ module.exports = {
             failed ? ` ${failed} failed (see logs for details).` : ""
           }`
         );
-        
+
+        // We return so the announcement relay doesn't also try to handle this
         return;
       } catch (err) {
-        await logger.error(`[Broadcast] Failed to process broadcast: ${err.message}`);
+        await logger.error(
+          `[Broadcast] Failed to process broadcast: ${err.message}`
+        );
         return message.reply(
           "❌ Something went wrong while sending the broadcast. Check the logs."
         );
@@ -130,7 +144,13 @@ module.exports = {
 
     // -------------------------------------------------------
     // Default behavior: Announcement Relay
+    // Only for announcement/rules channels
     // -------------------------------------------------------
+    if (!ANNOUNCEMENT_CHANNELS.includes(message.channel.id)) {
+      // Not in a repost channel and not a broadcast command → ignore
+      return;
+    }
+
     const embed = new EmbedBuilder()
       .setColor("#5865F2")
       .setDescription(message.content)
