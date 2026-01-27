@@ -196,3 +196,8 @@ All notable changes to **GarlicRemind** are documented here.
 
 ### 📅 2025-08-05
 - `fix(reminderStore): prevent infinite loop by only rescheduling successful reminders` ([`da5d78c`](https://github.com/GarlicRot/GarlicRemind/commit/da5d78c883108ac9574063b9aad74d066751556f)) by **GarlicRot**
+
+---
+
+### 📅 2026-01-27
+- `Add .broadcast command for dev message broadcasts` ([`0458bfd`](https://github.com/GarlicRot/GarlicRemind/commit/0458bfd26086b8c81fd4166ef4238ae53a1887cf)) by **GarlicRot**
