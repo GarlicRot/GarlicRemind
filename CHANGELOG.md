@@ -207,3 +207,8 @@ All notable changes to **GarlicRemind** are documented here.
 
 ### 📅 2026-02-01
 - `refactor(help): simplify /help output and improve readability` ([`1e98633`](https://github.com/GarlicRot/GarlicRemind/commit/1e986333f9cff5523f57e5139fd01d159d89660a)) by **GarlicRot**
+
+---
+
+### 📅 2026-02-14
+- `refactor(firebase): switch to shared service account JSON for production` ([`44eb642`](https://github.com/GarlicRot/GarlicRemind/commit/44eb6420afadf6085d7b23f1c32fe81703c800e4)) by **GarlicRot**
